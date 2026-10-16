@@ -341,12 +341,12 @@
                             </div>
 
                             <!-- Passage Box if exists -->
-                            <div id="q-passage-container" class="mb-4 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-300 text-xs md:text-sm leading-relaxed max-h-64 overflow-y-auto custom-scrollbar font-mono">
+                            <div id="q-passage-container" class="whitespace-pre-line mb-4 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-300 text-xs md:text-sm leading-relaxed max-h-64 overflow-y-auto custom-scrollbar font-mono">
                                 <p id="q-passage-text"></p>
                             </div>
 
                             <!-- Question Title -->
-                            <h3 id="q-title" class="text-base md:text-lg font-bold text-white mb-6 leading-snug">
+                            <h3 id="q-title" class="whitespace-pre-line text-base md:text-lg font-bold text-white mb-6 leading-snug">
                                 문항 로딩 중...
                             </h3>
 
@@ -376,7 +376,7 @@
                         <h4 class="text-sm font-bold text-white mb-3 flex items-center justify-between">
                             <span class="flex items-center space-x-1.5">
                                 <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i>
-                                <span>60문항 OMR 답안지</span>
+                                <span id="omr-title">60문항 OMR 답안지</span>
                             </span>
                             <span class="text-xs text-slate-400 font-normal">빠른 이동</span>
                         </h4>
@@ -515,7 +515,7 @@
                     <i data-lucide="trophy" class="w-8 h-8"></i>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2">NCS 모의고사 성적 분석 리포트</h2>
-                <p class="text-slate-400 text-sm mb-6">서울교통공사 9호선 오피셜 전형 (70분 / 60문항) 합격 커트라인 대조 결과</p>
+                <p id="result-sub" class="text-slate-400 text-sm mb-6">서울교통공사 9호선 전형 (70분 / 60문항) 합격 커트라인 대조 결과</p>
 
                 <div class="flex justify-center items-center space-x-6 md:space-x-12 mb-6">
                     <div>
@@ -534,6 +534,7 @@
                     </div>
                 </div>
 
+                <div id="result-breakdown" class="grid grid-cols-3 gap-2 max-w-md mx-auto mb-4 text-xs"></div>
                 <div id="result-evaluation" class="inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-800 text-amber-300 border border-slate-700">
                     합격 예상 권역입니다!
                 </div>
@@ -704,101 +705,11 @@
     </footer>
 
     <!-- JavaScript Application Engine -->
+    <script src="questions.js"></script>
     <script>
-        // Generate robust built-in question bank covering Communication (20), Problem Solving (20), and Math (20)
+        // 문제 은행은 questions.js(NCSBank)에서 만든다.
         function generateOfficialQuestionBank() {
-            const bank = [];
-
-            // 1~20: 의사소통능력 (20문항)
-            const commTopics = [
-                { title: "9호선 혼잡도 완화 대책 공고문", detail: "가양역 및 염창역 질서유지요원 각각 4명 추가 배치, 예비열차 2편성 투입" },
-                { title: "서울교통공사 9호선 안전수칙 지침서", detail: "승강장 안전문(PSD) 수동 개폐 시 관제 승인 절차 및 수동 열쇠 보관 규정" },
-                { title: "고객 민원 대응 유실물 처리 매뉴얼", detail: "역사 습득 유실물 7일간 보관 후 경찰서 이전 처리 규칙" },
-                { title: "9호선 조기탑승 할인 제도 안내문", detail: "첫차부터 06:30 이전 탑승 시 기본운임 20% 할인 적용 대상" },
-                { title: "열차 내 비상인터폰 작동 시 승무원 대응 수칙", detail: "관제센터 동시 통보 및 정차역 안전요원 비상대기 요청" }
-            ];
-
-            for (let i = 1; i <= 20; i++) {
-                const topic = commTopics[(i - 1) % commTopics.length];
-                bank.push({
-                    id: i,
-                    category: "의사소통능력 (20문항 중 " + i + "번)",
-                    passage: `【서울교통공사 9호선 직무지침 및 공고문 #${i}】\n` +
-                             `1. 목적: 9호선 출퇴근 시간대 안전확보 및 ${topic.title}.\n` +
-                             `2. 주요 내용: ${topic.detail}.\n` +
-                             `3. 특기사항: 비상상황 발생 시 관제센터에 즉시 보고 후 승객 안내방송을 3분 이내 2회 이상 실시하여야 한다.\n` +
-                             `4. 본 지침은 2026년 3월 1일부터 시행하며 이전 안내문은 효력을 상실한다.`,
-                    question: `위 지침 및 공고문의 내용과 부합하지 않는 부적절한 설명은? (문항 ${i})`,
-                    options: [
-                        `① 비상상황 시 관제센터 보고 후 승객 안내방송을 실시해야 한다.`,
-                        `② 본 지침은 2026년 3월 1일부터 효력을 발생한다.`,
-                        `③ 승객 안내방송은 비상시 10분 이내에만 1회 실시하면 충분하다.`,
-                        `④ ${topic.title}에 명시된 규칙을 준수하여 운행을 실시한다.`
-                    ],
-                    answerIndex: 2,
-                    explanation: `③번 오류: 지침 3항에서 비상상황 발생 시 3분 이내 2회 이상 안내방송을 실시하도록 명시하고 있습니다.`,
-                    speedTip: "⚡ 10초 컷 스피드 팁: 지문의 수치 규정('3분 이내 2회')과 선지의 수치('10분 이내 1회')를 직접 비교하여 단번에 소거하세요!"
-                });
-            }
-
-            // 21~40: 문제해결능력 (20문항)
-            const psTopics = [
-                { type: "급행열차 추월 및 정차 다이어그램", detail: "가양역에서 일반열차가 대피선에 정차하여 급행열차를 먼저 통과시킴" },
-                { type: "신호장애 비상운전(RM모드) 전환 순서", detail: "1) 관제보고 → 2) RM모드 변환(25km/h 제한) → 3) 승객안내방송" },
-                { type: "역사 안전요원 교대 시프트 배치", detail: "여의도역(x+2명), 신논현역(x명), 김포공항역((2x+2)/2명) 총 12명" },
-                { type: "승강장 화재 발생 시 승객 대피 동선", detail: "제연설비 작동 방향의 반대 및 상람풍 방향으로 유도" }
-            ];
-
-            for (let i = 21; i <= 40; i++) {
-                const topic = psTopics[(i - 21) % psTopics.length];
-                bank.push({
-                    id: i,
-                    category: "문제해결능력 (20문항 중 " + (i - 20) + "번)",
-                    passage: `【9호선 현장 문제해결 시나리오 #${i - 20}】\n` +
-                             `상황: 9호선 구간 내 ${topic.type} 상황 발생.\n` +
-                             `조건: ${topic.detail}.\n` +
-                             `원칙: 철도안전법 제26조에 따라 관제사의 지시 없이 독자적인 승강장 통과는 엄격히 금지된다.`,
-                    question: `다음 중 현장 대응 수칙으로 가장 올바른 조치는? (문항 ${i})`,
-                    options: [
-                        `① 관제 승인 없이 비상 신호를 무시하고 최고속도로 다음 역까지 이동한다.`,
-                        `② 관제센터 상황 보고 및 승인을 먼저 득한 후 규정된 매뉴얼 순서대로 조치한다.`,
-                        `③ 승객 대피 방송을 생략하고 문을 닫은 상태로 대기한다.`,
-                        `④ 사고 발생 보고를 근무 교대 시간 이후로 미룬다.`
-                    ],
-                    answerIndex: 1,
-                    explanation: `②번 정답: 철도 안전 매뉴얼의 절대 1순칙은 언제나 '관제 보고 및 승인 득함'입니다.`,
-                    speedTip: "⚡ 10초 컷 스피드 팁: 철도 문제해결영역에서 '관제 승인 및 보고'가 포함된 선지가 언제나 최우선 정답입니다."
-                });
-            }
-
-            // 41~60: 수리능력 (20문항)
-            for (let i = 41; i <= 60; i++) {
-                const dist = 10 + (i - 40) * 2; // 12km, 14km, ...
-                const baseFare = 1400;
-                const addFare = Math.ceil(Math.max(0, dist - 10) / 5) * 100;
-                const totalFare = baseFare + addFare;
-
-                bank.push({
-                    id: i,
-                    category: "수리능력 (20문항 중 " + (i - 40) + "번)",
-                    passage: `【수도권 지하철 통합운임 산정 기준】\n` +
-                             `- 기본운임: 10km까지 ${baseFare}원\n` +
-                             `- 추가운임: 10km 초과~50km까지 매 5km 마다 100원 추가\n` +
-                             `- 승객 A는 9호선 김포공항역에서 목적지까지 총 ${dist}km를 이용하였다.`,
-                    question: `승객 A가 지불해야 하는 총 지하철 운임은 얼마인가? (문항 ${i})`,
-                    options: [
-                        `① ${totalFare - 100}원`,
-                        `② ${totalFare}원`,
-                        `③ ${totalFare + 100}원`,
-                        `④ ${totalFare + 200}원`
-                    ],
-                    answerIndex: 1,
-                    explanation: `이동거리 ${dist}km = 기본 10km(${baseFare}원) + 초과거리 ${dist - 10}km. 매 5km 마다 100원이 추가되므로 총 운임은 ${totalFare}원입니다.`,
-                    speedTip: `⚡ 10초 컷 스피드 팁: 초과거리(${dist - 10}km)를 5로 나눈 올림값에 100을 곱해 기본요금 1,400원에 더하세요!`
-                });
-            }
-
-            return bank;
+            return NCSBank.exam();
         }
 
         function generatePersonality200Questions() {
@@ -809,50 +720,79 @@
                 { name: "팀워크 & 조직융화", trait: "teamwork" },
                 { name: "책임감 & 성실성", trait: "responsibility" }
             ];
-
-            const questions = [];
+            // desirable: 바람직한 응답 방향(4=그렇다, 1=아니다)
             const templates = [
-                // Safety / Compliance
+                // 안전의식 & 원칙준수
                 { text: "나는 바쁜 상황이라도 작업 안전 규정을 반드시 준수한다.", cat: 0, desirable: 4 },
                 { text: "작은 규칙은 상황에 따라 어겨도 괜찮다고 생각한다.", cat: 0, desirable: 1 },
                 { text: "위험 요소를 발견하면 내 업무가 아니더라도 즉시 보고한다.", cat: 0, desirable: 4 },
                 { text: "점검 매뉴얼을 다 읽지 않고 감으로 처리하는 편이다.", cat: 0, desirable: 1 },
-
-                // Lie Scale
+                { text: "아무도 보지 않아도 정해진 절차대로 일한다.", cat: 0, desirable: 4 },
+                { text: "일정이 급하면 안전 확인 절차를 생략할 수 있다고 생각한다.", cat: 0, desirable: 1 },
+                { text: "사소한 이상 징후라도 기록으로 남긴다.", cat: 0, desirable: 4 },
+                { text: "규정보다 내 경험이 더 정확하다고 생각한다.", cat: 0, desirable: 1 },
+                { text: "안전을 위해서라면 일정이 늦어지는 것을 감수할 수 있다.", cat: 0, desirable: 4 },
+                { text: "위험해 보이는 상황에서도 '괜찮겠지' 하고 넘어가는 편이다.", cat: 0, desirable: 1 },
+                { text: "작업 전에 보호 장비를 꼼꼼히 점검한다.", cat: 0, desirable: 4 },
+                { text: "상급자가 규정과 다르게 지시해도 따지지 않고 따르는 편이다.", cat: 0, desirable: 1 },
+                // 거짓말 검증
                 { text: "나는 살면서 단 한 번도 거짓말을 해본 적이 없다.", cat: 1, desirable: 1 },
                 { text: "나는 어떤 상황에서도 절대 화를 내지 않는다.", cat: 1, desirable: 1 },
                 { text: "나는 약속 시간을 단 한 번도 어긴 적이 없다.", cat: 1, desirable: 1 },
                 { text: "나는 타인에 대해 나쁜 생각을 한 적이 한 번도 없다.", cat: 1, desirable: 1 },
-
-                // Customer Care
+                { text: "나는 살면서 후회한 일이 하나도 없다.", cat: 1, desirable: 1 },
+                { text: "나는 남의 험담을 해 본 적이 한 번도 없다.", cat: 1, desirable: 1 },
+                // 고객지향 & 소통
                 { text: "화가 난 고객이라도 끝까지 경청하며 정중하게 대한다.", cat: 2, desirable: 4 },
                 { text: "까다로운 민원인을 마주치면 가능하면 피하고 싶다.", cat: 2, desirable: 1 },
-
-                // Teamwork
+                { text: "불편해하는 사람을 보면 먼저 다가가 도움을 준다.", cat: 2, desirable: 4 },
+                { text: "같은 질문을 반복하는 사람을 보면 짜증이 난다.", cat: 2, desirable: 1 },
+                { text: "불만을 가진 고객에게도 해결 방법을 끝까지 찾아 안내한다.", cat: 2, desirable: 4 },
+                { text: "상대의 말투가 무례하면 나도 똑같이 대응한다.", cat: 2, desirable: 1 },
+                { text: "길을 묻는 사람에게 안내해 주는 일이 즐겁다.", cat: 2, desirable: 4 },
+                // 팀워크 & 조직융화
                 { text: "팀의 목표를 위해서라면 개인의 선호를 양보할 수 있다.", cat: 3, desirable: 4 },
                 { text: "동료의 실수를 보면 못 본 척 넘어가는 것이 좋다.", cat: 3, desirable: 1 },
-
-                // Responsibility
-                { text: "맡은 임무는 끝까지 책임지고 완수한다.", cat: 4, desirable: 4 }
+                { text: "의견이 다른 동료와도 대화로 합의점을 찾는다.", cat: 3, desirable: 4 },
+                { text: "내 일이 아니면 도와주지 않는 편이다.", cat: 3, desirable: 1 },
+                { text: "동료가 어려워하면 시간을 내어 함께 해결한다.", cat: 3, desirable: 4 },
+                { text: "회의에서 반대 의견이 있어도 말하지 않고 넘어간다.", cat: 3, desirable: 1 },
+                { text: "성과가 나면 팀원 모두의 공으로 돌린다.", cat: 3, desirable: 4 },
+                { text: "나와 맞지 않는 사람과는 일하고 싶지 않다.", cat: 3, desirable: 1 },
+                // 책임감 & 성실성
+                { text: "맡은 임무는 끝까지 책임지고 완수한다.", cat: 4, desirable: 4 },
+                { text: "힘든 일은 가능하면 남에게 미루고 싶다.", cat: 4, desirable: 1 },
+                { text: "실수를 하면 숨기지 않고 먼저 보고한다.", cat: 4, desirable: 4 },
+                { text: "마감이 다가오면 일을 대충 마무리하는 편이다.", cat: 4, desirable: 1 },
+                { text: "일의 결과가 나쁘면 환경 탓을 하는 편이다.", cat: 4, desirable: 1 },
+                { text: "근무 시간에 늦지 않도록 미리 도착한다.", cat: 4, desirable: 4 },
+                { text: "반복되는 단순 업무도 집중해서 한다.", cat: 4, desirable: 4 }
             ];
 
-            for (let i = 1; i <= 200; i++) {
-                const t = templates[(i - 1) % templates.length];
-                questions.push({
-                    id: i,
-                    category: categories[t.cat].name,
-                    trait: categories[t.cat].trait,
-                    text: `[문항 ${i}] ` + t.text,
-                    desirable: t.desirable
-                });
+            const questions = [];
+            while (questions.length < 200) {
+                for (const t of NCSBank.shuffle(templates)) {
+                    if (questions.length >= 200) break;
+                    questions.push({
+                        id: questions.length + 1,
+                        category: categories[t.cat].name,
+                        trait: categories[t.cat].trait,
+                        text: t.text,
+                        desirable: t.desirable
+                    });
+                }
             }
             return questions;
         }
 
-        class NCSApp {
+class NCSApp {
             constructor() {
                 this.currentView = 'dashboard';
                 this.questions = generateOfficialQuestionBank();
+                this.mode = 'full';
+                this.totalTime = 4200;
+                this.wrongs = [];
+                this.drills = [];
                 this.personalityQuestions = generatePersonality200Questions();
                 
                 this.currentExamIndex = 0;
@@ -902,6 +842,7 @@
                     if (d.targetSeries && this.cutoffs[d.targetSeries]) this.targetSeries = d.targetSeries;
                     this.persStatus = d.persStatus || null;
                     this.history = d.history || [];
+                    this.wrongs = d.wrongs || [];
                 } catch (e) {}
             }
 
@@ -909,7 +850,7 @@
                 try {
                     localStorage.setItem('ncs9-state', JSON.stringify({
                         solvedCount: this.solvedCount, topScore: this.topScore,
-                        targetSeries: this.targetSeries, persStatus: this.persStatus, history: this.history
+                        targetSeries: this.targetSeries, persStatus: this.persStatus, history: this.history, wrongs: this.wrongs
                     }));
                 } catch (e) {}
             }
@@ -968,13 +909,13 @@
             renderCategories() {
                 const container = document.getElementById('category-cards');
                 const categories = [
-                    { name: '의사소통능력 (20문항)', desc: '9호선 지침서, 혼잡도 공고문, 유실물 수칙, 고객민원 요약', icon: 'message-square', color: 'blue' },
-                    { name: '문제해결능력 (20문항)', desc: '급행열차 다이어그램, RM모드 전환, 인력배치, 비상대피 수칙', icon: 'cpu', color: 'emerald' },
-                    { name: '수리능력 (20문항)', desc: '통합운임계산, 추가요금, 조기탑승 할인, 소요시간 스피드 계산', icon: 'calculator', color: 'amber' },
+                    { key: 'comm', name: '의사소통능력', desc: '지침·공고문 일치/불일치, 문단 배열, 빈칸, 맞춤법, 민원 응대 표현', icon: 'message-square' },
+                    { key: 'ps', name: '문제해결능력', desc: '조건 추론, 참/거짓, 경로·시각표, 우선순위, 손익분기, 교대근무', icon: 'cpu' },
+                    { key: 'math', name: '수리능력', desc: '운임, 속도·시간, 혼잡도, 증가율, 비례배분, 일의 양, 경우의 수 (매번 숫자가 바뀜)', icon: 'calculator' },
                 ];
 
-                container.innerHTML = categories.map(cat => `
-                    <div onclick="app.startMockExam()" class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl p-5 cursor-pointer transition transform hover:-translate-y-1">
+                const cards = categories.map(cat => `
+                    <div onclick="app.startPractice('${cat.key}')" class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl p-5 cursor-pointer transition transform hover:-translate-y-1">
                         <div class="flex items-center space-x-3 mb-3">
                             <div class="p-2.5 bg-slate-800 text-amber-400 rounded-lg">
                                 <i data-lucide="${cat.icon}" class="w-5 h-5"></i>
@@ -983,24 +924,39 @@
                         </div>
                         <p class="text-xs text-slate-400 leading-relaxed mb-4">${cat.desc}</p>
                         <div class="flex items-center justify-between text-xs text-amber-400 font-semibold pt-2 border-t border-slate-800/60">
-                            <span>실전 60문항 풀모의고사 시작</span>
+                            <span>10문항 빠른 연습 시작 (약 12분)</span>
                             <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </div>
                     </div>
                 `).join('');
+
+                const n = this.wrongs.length;
+                const wrongCard = `
+                    <div ${n ? `onclick="app.startWrongNote()"` : ''} class="md:col-span-3 bg-slate-900 border ${n ? 'border-rose-500/40 hover:border-rose-400 cursor-pointer' : 'border-slate-800'} rounded-xl p-4 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20"><i data-lucide="notebook-pen" class="w-5 h-5"></i></div>
+                            <div>
+                                <div class="font-bold text-white text-sm">오답노트 <span class="text-rose-400">${n}문항</span></div>
+                                <div class="text-xs text-slate-400">${n ? '틀린 문제를 다시 풀어 맞히면 자동으로 노트에서 빠집니다.' : '틀린 문제가 여기에 자동 저장됩니다.'}</div>
+                            </div>
+                        </div>
+                        ${n ? '<span class="text-xs font-semibold text-rose-300 flex items-center space-x-1"><span>복습하기</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>' : ''}
+                    </div>`;
+
+                container.innerHTML = cards + wrongCard;
             }
 
             renderSpeedDrills() {
                 const container = document.getElementById('speed-drill-list');
-                const sampleDrills = this.questions.slice(0, 6);
+                this.drills = NCSBank.sample(6);
 
-                container.innerHTML = sampleDrills.map((q, idx) => `
+                container.innerHTML = this.drills.map((q, idx) => `
                     <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
                         <div class="flex justify-between items-center text-xs">
                             <span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/20">${q.category}</span>
                             <span class="text-slate-400">대표유형 #${idx + 1}</span>
                         </div>
-                        <h4 class="text-sm font-bold text-white">${q.question}</h4>
+                        <h4 class="text-sm font-bold text-white whitespace-pre-line">${q.question}</h4>
                         <div class="bg-slate-950 p-3 rounded-lg text-xs text-emerald-300 border border-emerald-500/20 font-semibold">
                             ${q.speedTip}
                         </div>
@@ -1012,23 +968,53 @@
             }
 
             showSpeedDetail(index) {
-                const q = this.questions[index];
-                alert(`[${q.category}]\n\n정답: ${q.options[q.answerIndex]}\n\n해설: ${q.explanation}\n\n스피드 팁: ${q.speedTip}`);
+                const q = this.drills[index];
+                alert(`[${q.category}]\n\n${q.passage ? q.passage + '\n\n' : ''}${q.question}\n\n정답: ${q.options[q.answerIndex]}\n\n해설: ${q.explanation}\n\n${q.speedTip}`);
             }
 
-            startMockExam() {
-                this.questions = generateOfficialQuestionBank();
+            beginSession(qs, mode, seconds, title) {
+                if (!qs.length) { alert('풀 문제가 없습니다.'); return; }
+                this.questions = qs;
+                this.mode = mode;
+                this.totalTime = seconds;
+                this.timeLeft = seconds;
                 this.currentExamIndex = 0;
                 this.userAnswers = {};
-                this.timeLeft = 4200; // 70 minutes
-                
+                this.bookmarks = new Set();
+                document.getElementById('exam-title-badge').textContent = title;
+                document.getElementById('omr-title').textContent = `${qs.length}문항 OMR 답안지`;
+
                 this.switchView('exam');
                 this.startTimer();
                 this.renderQuestion();
                 this.renderOMR();
             }
 
-            startTimer() {
+            startMockExam() {
+                this.beginSession(NCSBank.exam(), 'full', 4200, '서울교통공사 9호선 NCS 실전 모의고사 (60문항)');
+            }
+
+            startPractice(cat) {
+                const names = { comm: '의사소통능력', ps: '문제해결능력', math: '수리능력' };
+                this.beginSession(NCSBank.practice(cat, 10), 'practice', 700, `${names[cat]} 10문항 연습`);
+            }
+
+            startWrongNote() {
+                const qs = NCSBank.shuffle(this.wrongs).slice(0, 20);
+                this.beginSession(qs, 'wrong', qs.length * 70, `오답노트 복습 (${qs.length}문항)`);
+            }
+
+            addWrong(q) {
+                this.wrongs = this.wrongs.filter(w => w.id !== q.id);
+                this.wrongs.push(q);
+                if (this.wrongs.length > 100) this.wrongs.shift();
+            }
+
+            removeWrong(q) {
+                this.wrongs = this.wrongs.filter(w => w.id !== q.id);
+            }
+
+startTimer() {
                 if (this.timerInterval) clearInterval(this.timerInterval);
                 this.updateTimerDisplay();
 
@@ -1038,7 +1024,7 @@
 
                     if (this.timeLeft <= 0) {
                         clearInterval(this.timerInterval);
-                        alert('NCS 시험시간(70분)이 종료되었습니다! 작성된 답안을 자동으로 제출합니다.');
+                        alert('시험 시간이 종료되었습니다! 작성된 답안을 자동으로 제출합니다.');
                         this.submitExam();
                     }
                 }, 1000);
@@ -1153,50 +1139,70 @@
                 if (this.timerInterval) clearInterval(this.timerInterval);
 
                 let correctCount = 0;
+                const byCat = {};
                 this.incorrectList = [];
 
                 this.questions.forEach((q, idx) => {
                     const userAns = this.userAnswers[idx];
-                    if (userAns === q.answerIndex) {
+                    const ok = userAns === q.answerIndex;
+                    const c = byCat[q.category] || (byCat[q.category] = { ok: 0, n: 0 });
+                    c.n++;
+                    if (ok) {
                         correctCount++;
+                        c.ok++;
+                        this.removeWrong(q);
                     } else {
-                        this.incorrectList.push({
-                            question: q,
-                            userAnswer: userAns
-                        });
+                        this.incorrectList.push({ question: q, userAnswer: userAns });
+                        this.addWrong(q);
                     }
                 });
 
-                const totalScore = Math.round((correctCount / this.questions.length) * 100);
-                this.solvedCount += this.questions.length;
-                if (totalScore > this.topScore) this.topScore = totalScore;
-                this.history.push({ t: Date.now(), score: totalScore });
-                this.history = this.history.slice(-50);
+                const total = this.questions.length;
+                const totalScore = Math.round((correctCount / total) * 100);
+                this.solvedCount += total;
+                if (this.mode === 'full') {
+                    if (totalScore > this.topScore) this.topScore = totalScore;
+                    this.history.push({ t: Date.now(), score: totalScore });
+                    this.history = this.history.slice(-50);
+                }
                 this.saveState();
 
                 this.updateStats();
+                this.renderCategories();
 
                 // Render Results Page
                 document.getElementById('result-score').textContent = `${totalScore}점`;
-                document.getElementById('result-count').textContent = `${correctCount} / ${this.questions.length}`;
-                
-                const timeTakenSec = 4200 - this.timeLeft;
-                const minTaken = Math.floor(timeTakenSec / 60);
-                const secTaken = timeTakenSec % 60;
-                document.getElementById('result-time').textContent = `${minTaken}분 ${secTaken}초`;
+                document.getElementById('result-count').textContent = `${correctCount} / ${total}`;
+                document.getElementById('result-sub').textContent = this.mode === 'full'
+                    ? '서울교통공사 9호선 전형 (70분 / 60문항) 합격 커트라인 대조 결과'
+                    : '연습 세트 결과 · 틀린 문제는 오답노트에 저장되었습니다';
 
-                const targetCutoff = this.cutoffs[this.targetSeries] || 80;
+                const timeTakenSec = Math.max(0, this.totalTime - this.timeLeft);
+                document.getElementById('result-time').textContent = `${Math.floor(timeTakenSec / 60)}분 ${timeTakenSec % 60}초`;
+
+                document.getElementById('result-breakdown').innerHTML = Object.entries(byCat).map(([name, c]) => `
+                    <div class="bg-slate-950 border border-slate-800 rounded-lg p-2">
+                        <div class="text-slate-400">${name}</div>
+                        <div class="font-bold text-white">${c.ok} / ${c.n}</div>
+                    </div>
+                `).join('');
+
                 const evalEl = document.getElementById('result-evaluation');
-                
-                if (totalScore >= targetCutoff) {
-                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                    evalEl.textContent = `🎉 [합격 유력] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)을 상회하는 안정권 점수입니다!`;
-                } else if (totalScore >= targetCutoff - 10) {
-                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
-                    evalEl.textContent = `⚡ [보완 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)까지 약 ${Math.round(targetCutoff - totalScore)}점 부족합니다. 수리/문제해결 스피드를 보완하세요.`;
+                if (this.mode === 'full') {
+                    const targetCutoff = this.cutoffs[this.targetSeries] || 80;
+                    if (totalScore >= targetCutoff) {
+                        evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                        evalEl.textContent = `🎉 [합격 유력] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)을 상회하는 안정권 점수입니다!`;
+                    } else if (totalScore >= targetCutoff - 10) {
+                        evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                        evalEl.textContent = `⚡ [보완 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)까지 약 ${Math.round(targetCutoff - totalScore)}점 부족합니다. 약한 영역을 오답노트로 보완하세요.`;
+                    } else {
+                        evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                        evalEl.textContent = `⚠️ [재점검 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)에 크게 미달했습니다. 영역별 10문항 연습부터 반복하세요.`;
+                    }
                 } else {
-                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                    evalEl.textContent = `⚠️ [재점검 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)에 크게 미달했습니다. 암기노트와 10초 컷 공식을 우선 학습하세요.`;
+                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-800 text-amber-300 border border-slate-700";
+                    evalEl.textContent = `정답률 ${totalScore}% · 오답노트 ${this.wrongs.length}문항 남음`;
                 }
 
                 // Render Review list
@@ -1213,7 +1219,8 @@
                                 </span>
                                 <span class="text-slate-400">${q.category}</span>
                             </div>
-                            <h4 class="text-sm font-bold text-white">${idx + 1}. ${q.question}</h4>
+                            ${q.passage ? `<details class="text-xs text-slate-400"><summary class="cursor-pointer">지문 보기</summary><p class="mt-2 whitespace-pre-line font-mono text-slate-300 leading-relaxed">${q.passage}</p></details>` : ''}
+                            <h4 class="text-sm font-bold text-white whitespace-pre-line">${idx + 1}. ${q.question}</h4>
                             <div class="bg-slate-950 p-3 rounded-lg text-xs text-slate-300 font-mono">
                                 <strong class="text-amber-400">정답: ${q.options[q.answerIndex]}</strong>
                                 <p class="mt-1">${q.explanation}</p>
@@ -1228,7 +1235,7 @@
                 this.switchView('result');
             }
 
-            startPersonalityTest() {
+startPersonalityTest() {
                 this.persIndex = 0;
                 this.persAnswers = {};
                 this.persTimeLeft = 1800; // 30 mins
@@ -1303,19 +1310,26 @@
                 // Evaluate Lie Scale & Safety Mindset
                 let lieFailCount = 0;
                 let safetyScore = 0;
+                let safetyMax = 0;
+                let lieTotal = 0;
 
                 this.personalityQuestions.forEach((q, idx) => {
                     const ans = this.persAnswers[idx] || 2;
+                    if (q.trait === 'lie') lieTotal++;
                     if (q.trait === 'lie' && ans >= 3) {
                         lieFailCount++;
                     }
                     if (q.trait === 'safety') {
+                        safetyMax += 4;
                         if (q.desirable === 4) safetyScore += ans;
                         else safetyScore += (5 - ans);
                     }
                 });
 
-                const isPass = lieFailCount < 3;
+                const lieLimit = Math.max(1, Math.ceil(lieTotal / 3));
+                const isPass = lieFailCount < lieLimit;
+                const safetyPct = safetyMax ? Math.round(safetyScore / safetyMax * 100) : 0;
+                const safetyLabel = safetyPct >= 85 ? '우수' : safetyPct >= 70 ? '양호' : '보완 필요';
 
                 resBox.innerHTML = `
                     <div class="w-16 h-16 mx-auto ${isPass ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border-rose-500/30'} rounded-2xl flex items-center justify-center border">
@@ -1335,11 +1349,11 @@
                         </div>
                         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
                             <div class="text-slate-400 mb-1">거짓응답 탐지(Lie Scale)</div>
-                            <div class="text-lg font-bold ${lieFailCount < 3 ? 'text-emerald-400' : 'text-rose-400'}">${lieFailCount}건 지적 (기준 3건 미만)</div>
+                            <div class="text-lg font-bold ${isPass ? 'text-emerald-400' : 'text-rose-400'}">${lieFailCount}건 지적 (기준 ${lieLimit}건 미만)</div>
                         </div>
                         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
                             <div class="text-slate-400 mb-1">안전/원칙 준수성</div>
-                            <div class="text-lg font-bold text-amber-400">양호 (안전의식 우수)</div>
+                            <div class="text-lg font-bold text-amber-400">${safetyLabel} (${safetyPct}점)</div>
                         </div>
                     </div>
 
