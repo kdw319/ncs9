@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0F172A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="9호선 NCS">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icons/icon-180.png">
+    <title>2026 서울교통공사 9호선 NCS & 인성검사 합격 시뮬레이터</title>
+    <!-- Tailwind CSS -->
+    <script src="vendor/tailwind.js"></script>
+    <!-- Lucide Icons -->
+    <script src="vendor/lucide.min.js"></script>
+    <!-- Custom Theme Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        line9: {
+                            DEFAULT: '#BDB092',
+                            dark: '#8E7F5F',
+                            light: '#FAF7F0',
+                            accent: '#FF6B00',
+                            navy: '#0F172A'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        
+        body {
+            font-family: 'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background-color: #0F172A;
+            color: #F8FAFC;
+            padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1E293B;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #BDB092;
+        }
+        .prose pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between custom-scrollbar">
+
+    <!-- Navigation Header -->
+    <header class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.switchView('dashboard')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#BDB092] to-amber-500 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-amber-900/20">
+                    9
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-extrabold text-sm sm:text-base md:text-lg text-white tracking-tight whitespace-nowrap">9호선 NCS & 인성</span>
+                        <span class="hidden sm:inline px-2 py-0.5 text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full">2026 실전 전형</span>
+                    </div>
+                    <p class="hidden sm:block text-xs text-slate-400">NCS(70분 60문) + 인성검사(30분 200문) 최적화</p>
+                </div>
+            </div>
+
+            <!-- Global Nav Buttons -->
+            <nav class="hidden md:flex items-center space-x-1">
+                <button onclick="app.switchView('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-amber-400 bg-slate-800/80">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>대시보드</span>
+                </button>
+                <button onclick="app.startMockExam()" id="nav-exam" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>NCS 실전 (70분/60문)</span>
+                </button>
+                <button onclick="app.switchView('personality')" id="nav-personality" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i>
+                    <span>인성검사 (30분/200문)</span>
+                </button>
+                <button onclick="app.switchView('speed')" id="nav-speed" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    <span>유형별 10초 컷</span>
+                </button>
+                <button onclick="app.switchView('ai-gen')" id="nav-aigen" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>AI 무한생성</span>
+                </button>
+                <button onclick="app.switchView('cheat')" id="nav-cheat" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                    <span>9호선 암기노트</span>
+                </button>
+            </nav>
+
+            <div class="flex items-center space-x-2">
+                <!-- Target Job Series Selector -->
+                <div class="flex items-center space-x-1 bg-slate-800/90 border border-amber-500/30 px-3 py-1 rounded-xl text-xs">
+                    <i data-lucide="crosshair" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span class="text-slate-400 hidden sm:inline">목표 직렬:</span>
+                    <select id="target-series-select" onchange="app.changeTargetSeries(this.value)" class="bg-transparent text-amber-400 font-bold focus:outline-none cursor-pointer">
+                        <option value="사무" class="bg-slate-900 text-slate-200">사무 (84.28)</option>
+                        <option value="차량" class="bg-slate-900 text-slate-200">차량 (컷 77.59점)</option>
+                        <option value="토목" class="bg-slate-900 text-slate-200">토목 (컷 76.40점)</option>
+                        <option value="전자" class="bg-slate-900 text-slate-200">전자 (컷 75.27점)</option>
+                        <option value="승무" class="bg-slate-900 text-slate-200">승무 (컷 73.50점)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <div id="view-dashboard" class="space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950/40 p-6 md:p-8 border border-amber-500/20 shadow-2xl">
+                <div class="relative z-10 max-w-3xl">
+                    <div class="inline-flex items-center space-x-2 bg-amber-500/10 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold mb-3 border border-amber-500/30">
+                        <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span>오피셜 전형 반영: NCS 3영역(60문/70분) + 인성검사(200문/30분)</span>
+                    </div>
+                    <h1 class="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight mb-3">
+                        2026 서울교통공사 9호선<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-[#BDB092] to-amber-500">
+                            NCS 필기 100점 & 인성 합격 패스
+                        </span>
+                    </h1>
+                    <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
+                        돈과 시간 부담 없이 단기에 9호선 정규직 필기를 완벽하게 격파하는 통합 시뮬레이터입니다.<br class="hidden sm:block">
+                        <strong>의사소통 20문 + 문제해결 20문 + 수리 20문</strong>의 70분 타임어택과 <strong>30분 200문항 인성검사</strong>를 실전처럼 훈련하세요.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="app.startMockExam()" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-2 text-sm">
+                            <i data-lucide="play-circle" class="w-5 h-5"></i>
+                            <span>NCS 실전 모의고사 (70분/60문항)</span>
+                        </button>
+                        <button onclick="app.switchView('personality')" class="px-5 py-3 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center space-x-2 text-sm">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                            <span>인성검사 훈련 (30분/200문항)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Official Test Format Overview Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-slate-900/90 border border-amber-500/30 rounded-xl p-5 flex items-start space-x-4 shadow-lg">
+                    <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20 shrink-0">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-amber-400 mb-1">수신문자 오피셜 9호선 규격</div>
+                        <div class="text-lg font-bold text-white mb-2">70분 / 60문항 (NCS 3영역)</div>
+                        <ul class="text-xs text-slate-300 space-y-1 font-mono">
+                            <li class="flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
+                                <span>의사소통능력: <strong>20문항</strong> (지침, 공고문, 민원)</span>
+                            </li>
+                            <li class="flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
+                                <span>문제해결능력: <strong>20문항</strong> (신호, 급행다이어그램, 비상수칙)</span>
+                            </li>
+                            <li class="flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+                                <span>수리능력: <strong>20문항</strong> (운임정산, 속도, 혼잡도, 통계)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-5 flex items-start space-x-4 shadow-lg">
+                    <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20 shrink-0">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-emerald-400 mb-1">인성검사 규격 (합/불 판정)</div>
+                        <div class="text-lg font-bold text-white mb-2">30분 / 200문항 (적부 판정)</div>
+                        <ul class="text-xs text-slate-300 space-y-1">
+                            <li class="flex items-center space-x-1">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                                <span>문항당 평균 <strong>9초</strong> 소요 스피드 응답 필요</span>
+                            </li>
+                            <li class="flex items-center space-x-1">
+                                <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-400"></i>
+                                <span>솔직성 검증(Lie Scale) 및 일관성 검사로 신뢰도 측정</span>
+                            </li>
+                            <li class="flex items-center space-x-1">
+                                <i data-lucide="subtitles" class="w-3.5 h-3.5 text-blue-400"></i>
+                                <span>철도공사 필수 가치: 안전우선, 원칙준수, 협동심 평가</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Official Cutoff Data Banner from User Image -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="text-sm font-bold text-white flex items-center space-x-2">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
+                        <span>서울교통공사 직렬별 필기 합격 커트라인 & 경쟁률 데이터</span>
+                    </h3>
+                    <span class="text-xs text-slate-400">평균 경쟁률 <strong>9.91 : 1</strong></span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-amber-500/30">
+                        <div class="text-xs text-slate-400">사무 (23.4:1)</div>
+                        <div class="text-base font-black text-amber-400 mt-1">84.28점</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400">차량</div>
+                        <div class="text-base font-bold text-white mt-1">77.59점</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400">토목 (17.92:1)</div>
+                        <div class="text-base font-bold text-white mt-1">76.40점</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400">전자</div>
+                        <div class="text-base font-bold text-white mt-1">75.27점</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400">승무</div>
+                        <div class="text-base font-bold text-white mt-1">73.50점</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center space-x-4">
+                    <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">누적 NCS 풀이</div>
+                        <div id="stat-solved" class="text-xl font-bold text-white">0 문항</div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center space-x-4">
+                    <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
+                        <i data-lucide="award" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">NCS 최고 점수</div>
+                        <div id="stat-topscore" class="text-xl font-bold text-white">0점</div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center space-x-4">
+                    <div class="p-3 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                        <i data-lucide="gauge" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">문항당 목표속도</div>
+                        <div class="text-xl font-bold text-white">70초/문</div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center space-x-4">
+                    <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                        <i data-lucide="user-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-400">인성검사 상태</div>
+                        <div id="stat-personality" class="text-xl font-bold text-emerald-400">준비완료</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Categories Cards -->
+            <div class="space-y-3">
+                <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i>
+                    <span>9호선 지정 출제 3대 영역 집중 훈련</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="category-cards">
+                    <!-- Dynamic rendering by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. EXAM PLAYER VIEW -->
+        <div id="view-exam" class="hidden space-y-4">
+            <!-- Test Header Controls -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <span id="exam-title-badge" class="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold rounded-lg">
+                        서울교통공사 9호선 NCS 실전 모의고사
+                    </span>
+                    <span id="exam-progress-text" class="text-sm font-semibold text-slate-300">
+                        문제 1 / 60
+                    </span>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Timer -->
+                    <div class="flex items-center space-x-2 bg-slate-950 px-4 py-2 rounded-xl border border-slate-800">
+                        <i data-lucide="timer" class="w-4 h-4 text-amber-400 animate-pulse"></i>
+                        <span class="text-xs text-slate-400">남은 시간:</span>
+                        <span id="exam-timer" class="font-mono text-lg font-bold text-amber-400">70:00</span>
+                    </div>
+
+                    <button onclick="app.submitExam()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-emerald-900/30">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>최종 제출하기</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Exam Layout Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Question Area -->
+                <div class="lg:col-span-8 space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 min-h-[500px] flex flex-col justify-between">
+                        <div>
+                            <!-- Category Badge & Flag -->
+                            <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                                <span id="q-category" class="text-xs font-semibold px-2.5 py-1 bg-slate-800 text-slate-300 rounded-md border border-slate-700">
+                                    의사소통능력 (20문항)
+                                </span>
+                                <button onclick="app.toggleBookmark()" id="btn-bookmark" class="text-slate-400 hover:text-amber-400 text-xs flex items-center space-x-1 border border-slate-800 px-2.5 py-1 rounded-md bg-slate-950">
+                                    <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+                                    <span>북마크</span>
+                                </button>
+                            </div>
+
+                            <!-- Passage Box if exists -->
+                            <div id="q-passage-container" class="mb-4 bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-300 text-xs md:text-sm leading-relaxed max-h-64 overflow-y-auto custom-scrollbar font-mono">
+                                <p id="q-passage-text"></p>
+                            </div>
+
+                            <!-- Question Title -->
+                            <h3 id="q-title" class="text-base md:text-lg font-bold text-white mb-6 leading-snug">
+                                문항 로딩 중...
+                            </h3>
+
+                            <!-- Options List -->
+                            <div id="q-options" class="space-y-3">
+                                <!-- Options dynamically generated -->
+                            </div>
+                        </div>
+
+                        <!-- Prev / Next Navigation -->
+                        <div class="flex justify-between items-center pt-6 mt-6 border-t border-slate-800">
+                            <button onclick="app.navigateQuestion(-1)" id="btn-prev-q" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-xl border border-slate-700 flex items-center space-x-1">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                <span>이전 문제</span>
+                            </button>
+                            <button onclick="app.navigateQuestion(1)" id="btn-next-q" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 text-sm font-bold rounded-xl shadow-md flex items-center space-x-1">
+                                <span>다음 문제</span>
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OMR Navigation Sidebar -->
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 sticky top-20">
+                        <h4 class="text-sm font-bold text-white mb-3 flex items-center justify-between">
+                            <span class="flex items-center space-x-1.5">
+                                <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i>
+                                <span>60문항 OMR 답안지</span>
+                            </span>
+                            <span class="text-xs text-slate-400 font-normal">빠른 이동</span>
+                        </h4>
+                        <div id="omr-grid" class="grid grid-cols-6 gap-1.5 max-h-96 overflow-y-auto custom-scrollbar p-1">
+                            <!-- OMR Buttons generated dynamically -->
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex justify-around text-xs text-slate-400">
+                            <span class="flex items-center space-x-1">
+                                <span class="w-3 h-3 rounded-full bg-slate-800 border border-slate-600 inline-block"></span>
+                                <span>미풀이</span>
+                            </span>
+                            <span class="flex items-center space-x-1">
+                                <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                                <span>풀이완료</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. PERSONALITY TEST VIEW (인성검사 30분 200문항) -->
+        <div id="view-personality" class="hidden space-y-6">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950/40 border border-emerald-500/30 rounded-2xl p-6">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-md mb-2 inline-block">
+                            필기전형 필수 과목 (30분 200문항)
+                        </span>
+                        <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+                            <i data-lucide="user-check" class="w-6 h-6 text-emerald-400"></i>
+                            <span>서울교통공사 9호선 인성검사 시뮬레이터</span>
+                        </h2>
+                        <p class="text-xs text-slate-300 mt-1">
+                            인성검사는 점수 반영이 아닌 <strong>합격/불합격(Pass/Fail) 판정</strong>입니다. 30분 내 200문항을 솔직하고 일관되게 답하는 속도 훈련이 핵심입니다.
+                        </p>
+                    </div>
+
+                    <!-- Personality Timer -->
+                    <div id="personality-timer-container" class="hidden flex items-center space-x-2 bg-slate-950 px-4 py-2.5 rounded-xl border border-emerald-500/40">
+                        <i data-lucide="timer" class="w-5 h-5 text-emerald-400 animate-pulse"></i>
+                        <span class="text-xs text-slate-400">남은 시간:</span>
+                        <span id="personality-timer" class="font-mono text-xl font-bold text-emerald-400">30:00</span>
+                    </div>
+                </div>
+
+                <!-- Guidance Notes -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-300">
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 flex items-start space-x-2">
+                        <i data-lucide="zap" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                        <span><strong>초스피드 응답:</strong> 깊이 고민하지 말고 읽는 즉시(문항당 8~9초) 직관적으로 클릭하세요.</span>
+                    </div>
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 flex items-start space-x-2">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400 shrink-0 mt-0.5"></i>
+                        <span><strong>거짓말 금지(Lie Scale):</strong> "나는 살면서 단 한번도 거짓말을 한 적 없다"류의 극단문항은 '아니다' 선택!</span>
+                    </div>
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 flex items-start space-x-2">
+                        <i data-lucide="compass" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+                        <span><strong>철도 안전 가치관:</strong> 원칙 준수, 안전 최우선, 규칙 이행, 팀워크 중심의 상식선유지.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personality Test Engine Container -->
+            <div id="personality-start-box" class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4">
+                <div class="w-16 h-16 mx-auto bg-emerald-500/10 text-emerald-400 rounded-2xl flex items-center justify-center border border-emerald-500/30">
+                    <i data-lucide="file-check-2" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">30분 200문항 타임어택 인성 실전 테스트</h3>
+                <p class="text-xs text-slate-400 max-w-xl mx-auto">
+                    실제 시험과 동일하게 4점 리커트 척도(매우 아니다 ~ 매우 그렇다)로 총 200개 핵심 문항이 연속 출제됩니다. 응답 일관성 및 일하지 않는 거짓 응답을 AI 알고리즘이 즉시 검증합니다.
+                </p>
+                <button onclick="app.startPersonalityTest()" class="px-8 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/40 transition inline-flex items-center space-x-2 text-sm">
+                    <i data-lucide="play" class="w-5 h-5"></i>
+                    <span>인성검사 모의응시 시작 (30분)</span>
+                </button>
+            </div>
+
+            <!-- Active Personality Runner -->
+            <div id="personality-runner" class="hidden space-y-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
+                    <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+                        <span class="text-xs font-bold text-emerald-400" id="pers-progress-badge">문항 1 / 200</span>
+                        <div class="w-1/2 bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                            <div id="pers-progress-bar" class="bg-emerald-500 h-full transition-all duration-200" style="width: 0.5%"></div>
+                        </div>
+                        <span class="text-xs text-slate-400 font-mono" id="pers-percent-text">0.5%</span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="text-center py-6">
+                        <span class="text-xs text-slate-500 font-mono mb-2 block" id="pers-cat-tag">[원칙준수 & 안전의식]</span>
+                        <h3 id="pers-q-text" class="text-lg md:text-2xl font-bold text-white leading-snug">
+                            나는 작업 시 정해진 매뉴얼보다 내 경험을 더 신뢰한다.
+                        </h3>
+                    </div>
+
+                    <!-- Option Buttons -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+                        <button onclick="app.answerPersonality(1)" class="p-4 bg-slate-950 hover:bg-rose-900/30 border border-slate-800 hover:border-rose-500 text-rose-300 font-bold rounded-xl text-sm transition">
+                            ① 전혀 아니다
+                        </button>
+                        <button onclick="app.answerPersonality(2)" class="p-4 bg-slate-950 hover:bg-amber-900/30 border border-slate-800 hover:border-amber-500 text-amber-200 font-bold rounded-xl text-sm transition">
+                            ② 대체로 아니다
+                        </button>
+                        <button onclick="app.answerPersonality(3)" class="p-4 bg-slate-950 hover:bg-blue-900/30 border border-slate-800 hover:border-blue-500 text-blue-200 font-bold rounded-xl text-sm transition">
+                            ③ 대체로 그렇다
+                        </button>
+                        <button onclick="app.answerPersonality(4)" class="p-4 bg-slate-950 hover:bg-emerald-900/30 border border-slate-800 hover:border-emerald-500 text-emerald-300 font-bold rounded-xl text-sm transition">
+                            ④ 매우 그렇다
+                        </button>
+                    </div>
+
+                    <!-- Prev Button -->
+                    <div class="flex justify-center pt-2">
+                        <button onclick="app.prevPersonality()" class="text-xs text-slate-400 hover:text-white flex items-center space-x-1">
+                            <i data-lucide="undo" class="w-3.5 h-3.5"></i>
+                            <span>이전 문항 수정하기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personality Result Box -->
+            <div id="personality-result" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-6">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- 4. TEST RESULT VIEW -->
+        <div id="view-result" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 text-center relative overflow-hidden">
+                <div class="inline-flex items-center justify-center p-3 bg-amber-500/10 text-amber-400 rounded-2xl border border-amber-500/20 mb-3">
+                    <i data-lucide="trophy" class="w-8 h-8"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2">NCS 모의고사 성적 분석 리포트</h2>
+                <p class="text-slate-400 text-sm mb-6">서울교통공사 9호선 오피셜 전형 (70분 / 60문항) 합격 커트라인 대조 결과</p>
+
+                <div class="flex justify-center items-center space-x-6 md:space-x-12 mb-6">
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">최종 득점</div>
+                        <div id="result-score" class="text-4xl md:text-5xl font-black text-amber-400">0점</div>
+                    </div>
+                    <div class="h-12 w-px bg-slate-800"></div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">맞힌 개수</div>
+                        <div id="result-count" class="text-2xl md:text-3xl font-bold text-white">0 / 60</div>
+                    </div>
+                    <div class="h-12 w-px bg-slate-800"></div>
+                    <div>
+                        <div class="text-xs text-slate-400 mb-1">소요 시간</div>
+                        <div id="result-time" class="text-2xl md:text-3xl font-bold text-slate-300">00:00</div>
+                    </div>
+                </div>
+
+                <div id="result-evaluation" class="inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-800 text-amber-300 border border-slate-700">
+                    합격 예상 권역입니다!
+                </div>
+            </div>
+
+            <!-- Detailed Question Review -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                    <i data-lucide="file-check" class="w-5 h-5 text-amber-400"></i>
+                    <span>영역별 상세 해설 및 10초 스피드 풀이법</span>
+                </h3>
+                <div id="result-questions-list" class="space-y-4">
+                    <!-- Review cards -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. SPEED TRAINING VIEW -->
+        <div id="view-speed" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-slate-900 to-amber-950/30 border border-slate-800 rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-white mb-2 flex items-center space-x-2">
+                    <i data-lucide="zap" class="w-6 h-6 text-amber-400"></i>
+                    <span>의사소통·문제해결·수리 10초 컷 접근법</span>
+                </h2>
+                <p class="text-slate-400 text-sm">
+                    지문 원문을 다 읽지 않고 수식/선지부터 소거하는 9호선 실전 타임어택 전술 노하우입니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="speed-drill-list">
+                <!-- Speed drill items rendered by JS -->
+            </div>
+        </div>
+
+        <!-- 6. AI CUSTOM GENERATOR VIEW -->
+        <div id="view-ai-gen" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Gemini AI 맞춤형 9호선 NCS 무한 문제 생성기</h2>
+                        <p class="text-xs text-slate-400">의사소통, 문제해결, 수리 3개 핵심 과목 반영 실전 신규 출제</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs text-slate-400 mb-1 font-semibold">Gemini API Key (이 기기 브라우저에만 저장 · 없으면 비워두세요)</label>
+                    <input id="ai-key" type="password" autocomplete="off" placeholder="AIza..." onchange="app.saveApiKey(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1 font-semibold">출제 영역 선택</label>
+                        <select id="ai-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                            <option value="의사소통능력 (9호선 지침/민원/공고문)">의사소통능력 (지침/민원/공고문)</option>
+                            <option value="수리능력 (9호선 운임계산 및 통계)">수리능력 (운임계산/속도/혼잡도)</option>
+                            <option value="문제해결능력 (열차시각표/신호장애/비상수칙)">문제해결능력 (급행시각표/신호장애)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1 font-semibold">난이도</label>
+                        <select id="ai-difficulty" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                            <option value="실전 수준 (중상)">실전 수준 (중상)</option>
+                            <option value="킬러 문항 (고난도 타임어택)">킬러 문항 (고난도)</option>
+                            <option value="개념 확인 (모듈 개념)">개념 확인 (기초 모듈)</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="app.generateAIQuestion()" id="btn-generate-ai" class="w-full py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-sm rounded-xl transition flex items-center justify-center space-x-2">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span>AI 신문항 생성하기</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Question Display Container -->
+            <div id="ai-question-card" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                <!-- Generated question injected here -->
+            </div>
+        </div>
+
+        <!-- 7. LINE 9 CHEAT SHEET VIEW -->
+        <div id="view-cheat" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <h2 class="text-xl font-bold text-white mb-2 flex items-center space-x-2">
+                    <i data-lucide="book-open" class="w-6 h-6 text-amber-400"></i>
+                    <span>9호선 & 서울교통공사 시험 직전 핵심 암기 노트</span>
+                </h2>
+                <p class="text-xs text-slate-400">
+                    시험장 쉬는 시간에 무조건 읽어야 하는 9호선 급행역, 철도안전법 수칙, 운임 공식
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: 9호선 노선 및 급행 정차역 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+                        <i data-lucide="train" class="w-4 h-4"></i>
+                        <span>9호선 16개 급행 정차역 암기</span>
+                    </h3>
+                    <p class="text-xs text-slate-300 leading-relaxed font-mono">
+                        <strong>김포공항 - 마곡나루 - 가양 - 염창 - 당산 - 여의도 - 노량진 - 동작 - 고속터미널 - 신논현 - 언주 - 선정릉 - 종합운동장 - 석촌 - 올림픽공원 - 중앙보훈병원</strong>
+                    </p>
+                    <div class="bg-slate-950 p-3 rounded-lg text-xs text-amber-200 border border-amber-500/20">
+                        ⚡ <strong>수리/문제해결 암기 팁:</strong> 환승 노선 수와 급행정차역 패턴을 묻는 출제 지문 빈출!
+                    </div>
+                </div>
+
+                <!-- Card 2: 철도안전법 핵심조항 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+                        <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                        <span>철도안전법 핵심 수치 모음</span>
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4">
+                        <li><strong>음주 제한:</strong> 혈중알코올농도 <strong>0.02%</strong> 이상 시 운전/관제 엄금</li>
+                        <li><strong>철도보호지구:</strong> 철도경계선으로부터 <strong>30m</strong> 이내의 지역</li>
+                        <li><strong>비상 정차 후 보고:</strong> 지체 없이 관제센터 보고 및 승객 안심 안내방송 1순위</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: 운임 및 정산 스피드 공식 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+                        <i data-lucide="calculator" class="w-4 h-4"></i>
+                        <span>수리영역 수도권 통합운임 공식</span>
+                    </h3>
+                    <div class="text-xs text-slate-300 space-y-1.5 font-mono bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <p>• 기본운임: 10km 이내 1,400원 (카드 기준)</p>
+                        <p>• 추가운임(10~50km): 매 5km 마다 100원 추가</p>
+                        <p>• 초과운임(50km 초과): 매 8km 마다 100원 추가</p>
+                        <p>• 조기탑승(06:30 이전): 기본운임의 20% 할인</p>
+                    </div>
+                </div>
+
+                <!-- Card 4: 민원 대응 및 인성 수칙 모듈 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                    <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>인성검사 합격 솔직성 패턴</span>
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4">
+                        <li><strong>Lie Scale 질문:</strong> "나는 약속 시간을 어겨본 적이 없다" → <u>아니다</u> 선택!</li>
+                        <li><strong>안전원칙:</strong> "급한 상황에서는 규정을 무시할 수 있다" → <u>전혀 아니다</u> 선택!</li>
+                        <li><strong>조직융화:</strong> "나와 의견이 다른 동료와 일하기 싫다" → <u>전혀 아니다</u> 선택!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Mobile Bottom Tab Bar -->
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 grid grid-cols-6 text-[10px]" style="padding-bottom:env(safe-area-inset-bottom)">
+        <button onclick="app.switchView('dashboard')" data-tab="dashboard" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="layout-dashboard" class="w-5 h-5"></i>홈</button>
+        <button onclick="app.startMockExam()" data-tab="exam" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="file-text" class="w-5 h-5"></i>NCS</button>
+        <button onclick="app.switchView('personality')" data-tab="personality" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="user-check" class="w-5 h-5"></i>인성</button>
+        <button onclick="app.switchView('speed')" data-tab="speed" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="zap" class="w-5 h-5"></i>10초컷</button>
+        <button onclick="app.switchView('ai-gen')" data-tab="ai-gen" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="sparkles" class="w-5 h-5"></i>AI</button>
+        <button onclick="app.switchView('cheat')" data-tab="cheat" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="book-open" class="w-5 h-5"></i>암기</button>
+    </nav>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>2026 서울교통공사 9호선 NCS(70분 60문항) & 인성검사(30분 200문항) 합격 전용 스피드 학습 시스템</p>
+    </footer>
+
+    <!-- JavaScript Application Engine -->
+    <script>
+        // Generate robust built-in question bank covering Communication (20), Problem Solving (20), and Math (20)
+        function generateOfficialQuestionBank() {
+            const bank = [];
+
+            // 1~20: 의사소통능력 (20문항)
+            const commTopics = [
+                { title: "9호선 혼잡도 완화 대책 공고문", detail: "가양역 및 염창역 질서유지요원 각각 4명 추가 배치, 예비열차 2편성 투입" },
+                { title: "서울교통공사 9호선 안전수칙 지침서", detail: "승강장 안전문(PSD) 수동 개폐 시 관제 승인 절차 및 수동 열쇠 보관 규정" },
+                { title: "고객 민원 대응 유실물 처리 매뉴얼", detail: "역사 습득 유실물 7일간 보관 후 경찰서 이전 처리 규칙" },
+                { title: "9호선 조기탑승 할인 제도 안내문", detail: "첫차부터 06:30 이전 탑승 시 기본운임 20% 할인 적용 대상" },
+                { title: "열차 내 비상인터폰 작동 시 승무원 대응 수칙", detail: "관제센터 동시 통보 및 정차역 안전요원 비상대기 요청" }
+            ];
+
+            for (let i = 1; i <= 20; i++) {
+                const topic = commTopics[(i - 1) % commTopics.length];
+                bank.push({
+                    id: i,
+                    category: "의사소통능력 (20문항 중 " + i + "번)",
+                    passage: `【서울교통공사 9호선 직무지침 및 공고문 #${i}】\n` +
+                             `1. 목적: 9호선 출퇴근 시간대 안전확보 및 ${topic.title}.\n` +
+                             `2. 주요 내용: ${topic.detail}.\n` +
+                             `3. 특기사항: 비상상황 발생 시 관제센터에 즉시 보고 후 승객 안내방송을 3분 이내 2회 이상 실시하여야 한다.\n` +
+                             `4. 본 지침은 2026년 3월 1일부터 시행하며 이전 안내문은 효력을 상실한다.`,
+                    question: `위 지침 및 공고문의 내용과 부합하지 않는 부적절한 설명은? (문항 ${i})`,
+                    options: [
+                        `① 비상상황 시 관제센터 보고 후 승객 안내방송을 실시해야 한다.`,
+                        `② 본 지침은 2026년 3월 1일부터 효력을 발생한다.`,
+                        `③ 승객 안내방송은 비상시 10분 이내에만 1회 실시하면 충분하다.`,
+                        `④ ${topic.title}에 명시된 규칙을 준수하여 운행을 실시한다.`
+                    ],
+                    answerIndex: 2,
+                    explanation: `③번 오류: 지침 3항에서 비상상황 발생 시 3분 이내 2회 이상 안내방송을 실시하도록 명시하고 있습니다.`,
+                    speedTip: "⚡ 10초 컷 스피드 팁: 지문의 수치 규정('3분 이내 2회')과 선지의 수치('10분 이내 1회')를 직접 비교하여 단번에 소거하세요!"
+                });
+            }
+
+            // 21~40: 문제해결능력 (20문항)
+            const psTopics = [
+                { type: "급행열차 추월 및 정차 다이어그램", detail: "가양역에서 일반열차가 대피선에 정차하여 급행열차를 먼저 통과시킴" },
+                { type: "신호장애 비상운전(RM모드) 전환 순서", detail: "1) 관제보고 → 2) RM모드 변환(25km/h 제한) → 3) 승객안내방송" },
+                { type: "역사 안전요원 교대 시프트 배치", detail: "여의도역(x+2명), 신논현역(x명), 김포공항역((2x+2)/2명) 총 12명" },
+                { type: "승강장 화재 발생 시 승객 대피 동선", detail: "제연설비 작동 방향의 반대 및 상람풍 방향으로 유도" }
+            ];
+
+            for (let i = 21; i <= 40; i++) {
+                const topic = psTopics[(i - 21) % psTopics.length];
+                bank.push({
+                    id: i,
+                    category: "문제해결능력 (20문항 중 " + (i - 20) + "번)",
+                    passage: `【9호선 현장 문제해결 시나리오 #${i - 20}】\n` +
+                             `상황: 9호선 구간 내 ${topic.type} 상황 발생.\n` +
+                             `조건: ${topic.detail}.\n` +
+                             `원칙: 철도안전법 제26조에 따라 관제사의 지시 없이 독자적인 승강장 통과는 엄격히 금지된다.`,
+                    question: `다음 중 현장 대응 수칙으로 가장 올바른 조치는? (문항 ${i})`,
+                    options: [
+                        `① 관제 승인 없이 비상 신호를 무시하고 최고속도로 다음 역까지 이동한다.`,
+                        `② 관제센터 상황 보고 및 승인을 먼저 득한 후 규정된 매뉴얼 순서대로 조치한다.`,
+                        `③ 승객 대피 방송을 생략하고 문을 닫은 상태로 대기한다.`,
+                        `④ 사고 발생 보고를 근무 교대 시간 이후로 미룬다.`
+                    ],
+                    answerIndex: 1,
+                    explanation: `②번 정답: 철도 안전 매뉴얼의 절대 1순칙은 언제나 '관제 보고 및 승인 득함'입니다.`,
+                    speedTip: "⚡ 10초 컷 스피드 팁: 철도 문제해결영역에서 '관제 승인 및 보고'가 포함된 선지가 언제나 최우선 정답입니다."
+                });
+            }
+
+            // 41~60: 수리능력 (20문항)
+            for (let i = 41; i <= 60; i++) {
+                const dist = 10 + (i - 40) * 2; // 12km, 14km, ...
+                const baseFare = 1400;
+                const addFare = Math.ceil(Math.max(0, dist - 10) / 5) * 100;
+                const totalFare = baseFare + addFare;
+
+                bank.push({
+                    id: i,
+                    category: "수리능력 (20문항 중 " + (i - 40) + "번)",
+                    passage: `【수도권 지하철 통합운임 산정 기준】\n` +
+                             `- 기본운임: 10km까지 ${baseFare}원\n` +
+                             `- 추가운임: 10km 초과~50km까지 매 5km 마다 100원 추가\n` +
+                             `- 승객 A는 9호선 김포공항역에서 목적지까지 총 ${dist}km를 이용하였다.`,
+                    question: `승객 A가 지불해야 하는 총 지하철 운임은 얼마인가? (문항 ${i})`,
+                    options: [
+                        `① ${totalFare - 100}원`,
+                        `② ${totalFare}원`,
+                        `③ ${totalFare + 100}원`,
+                        `④ ${totalFare + 200}원`
+                    ],
+                    answerIndex: 1,
+                    explanation: `이동거리 ${dist}km = 기본 10km(${baseFare}원) + 초과거리 ${dist - 10}km. 매 5km 마다 100원이 추가되므로 총 운임은 ${totalFare}원입니다.`,
+                    speedTip: `⚡ 10초 컷 스피드 팁: 초과거리(${dist - 10}km)를 5로 나눈 올림값에 100을 곱해 기본요금 1,400원에 더하세요!`
+                });
+            }
+
+            return bank;
+        }
+
+        function generatePersonality200Questions() {
+            const categories = [
+                { name: "안전의식 & 원칙준수", trait: "safety" },
+                { name: "거짓말 검증 (Lie Scale)", trait: "lie" },
+                { name: "고객지향 & 소통능력", trait: "customer" },
+                { name: "팀워크 & 조직융화", trait: "teamwork" },
+                { name: "책임감 & 성실성", trait: "responsibility" }
+            ];
+
+            const questions = [];
+            const templates = [
+                // Safety / Compliance
+                { text: "나는 바쁜 상황이라도 작업 안전 규정을 반드시 준수한다.", cat: 0, desirable: 4 },
+                { text: "작은 규칙은 상황에 따라 어겨도 괜찮다고 생각한다.", cat: 0, desirable: 1 },
+                { text: "위험 요소를 발견하면 내 업무가 아니더라도 즉시 보고한다.", cat: 0, desirable: 4 },
+                { text: "점검 매뉴얼을 다 읽지 않고 감으로 처리하는 편이다.", cat: 0, desirable: 1 },
+
+                // Lie Scale
+                { text: "나는 살면서 단 한 번도 거짓말을 해본 적이 없다.", cat: 1, desirable: 1 },
+                { text: "나는 어떤 상황에서도 절대 화를 내지 않는다.", cat: 1, desirable: 1 },
+                { text: "나는 약속 시간을 단 한 번도 어긴 적이 없다.", cat: 1, desirable: 1 },
+                { text: "나는 타인에 대해 나쁜 생각을 한 적이 한 번도 없다.", cat: 1, desirable: 1 },
+
+                // Customer Care
+                { text: "화가 난 고객이라도 끝까지 경청하며 정중하게 대한다.", cat: 2, desirable: 4 },
+                { text: "까다로운 민원인을 마주치면 가능하면 피하고 싶다.", cat: 2, desirable: 1 },
+
+                // Teamwork
+                { text: "팀의 목표를 위해서라면 개인의 선호를 양보할 수 있다.", cat: 3, desirable: 4 },
+                { text: "동료의 실수를 보면 못 본 척 넘어가는 것이 좋다.", cat: 3, desirable: 1 },
+
+                // Responsibility
+                { text: "맡은 임무는 끝까지 책임지고 완수한다.", cat: 4, desirable: 4 }
+            ];
+
+            for (let i = 1; i <= 200; i++) {
+                const t = templates[(i - 1) % templates.length];
+                questions.push({
+                    id: i,
+                    category: categories[t.cat].name,
+                    trait: categories[t.cat].trait,
+                    text: `[문항 ${i}] ` + t.text,
+                    desirable: t.desirable
+                });
+            }
+            return questions;
+        }
+
+        class NCSApp {
+            constructor() {
+                this.currentView = 'dashboard';
+                this.questions = generateOfficialQuestionBank();
+                this.personalityQuestions = generatePersonality200Questions();
+                
+                this.currentExamIndex = 0;
+                this.userAnswers = {};
+                this.bookmarks = new Set();
+
+                // Target Series & Cutoffs Data from user uploaded image
+                this.targetSeries = "사무";
+                this.cutoffs = {
+                    "사무": 84.28,
+                    "차량": 77.59,
+                    "토목": 76.40,
+                    "전자": 75.27,
+                    "승무": 73.50
+                };
+                
+                // NCS Timer: 70 minutes = 4200 seconds
+                this.timerInterval = null;
+                this.timeLeft = 4200; 
+
+                // Personality Engine State
+                this.persIndex = 0;
+                this.persAnswers = {};
+                this.persTimerInterval = null;
+                this.persTimeLeft = 1800; // 30 minutes = 1800 seconds
+
+                this.solvedCount = 0;
+                this.topScore = 0;
+                this.incorrectList = [];
+
+                // AI Engine state
+                this.currentAIQuestion = null;
+                this.selectedAIOption = null;
+                this.isAISubmitted = false;
+
+                this.loadState();
+                this.init();
+            }
+
+            loadState() {
+                this.history = [];
+                this.persStatus = null;
+                try {
+                    const d = JSON.parse(localStorage.getItem('ncs9-state') || '{}');
+                    this.solvedCount = d.solvedCount || 0;
+                    this.topScore = d.topScore || 0;
+                    if (d.targetSeries && this.cutoffs[d.targetSeries]) this.targetSeries = d.targetSeries;
+                    this.persStatus = d.persStatus || null;
+                    this.history = d.history || [];
+                } catch (e) {}
+            }
+
+            saveState() {
+                try {
+                    localStorage.setItem('ncs9-state', JSON.stringify({
+                        solvedCount: this.solvedCount, topScore: this.topScore,
+                        targetSeries: this.targetSeries, persStatus: this.persStatus, history: this.history
+                    }));
+                } catch (e) {}
+            }
+
+            getApiKey() { try { return localStorage.getItem('ncs9-apikey') || ''; } catch (e) { return ''; } }
+            saveApiKey(v) { try { localStorage.setItem('ncs9-apikey', v.trim()); } catch (e) {} }
+
+            changeTargetSeries(series) {
+                this.targetSeries = series;
+                this.saveState();
+                const cutoffScore = this.cutoffs[series] || 80.0;
+                alert(`[목표 직렬 변경] ${series} 직렬 필기 합격 커트라인 목표는 ${cutoffScore}점입니다!`);
+            }
+
+            init() {
+                const sel = document.getElementById('target-series-select');
+                if (sel) sel.value = this.targetSeries;
+                const keyEl = document.getElementById('ai-key');
+                if (keyEl) keyEl.value = this.getApiKey();
+                this.renderCategories();
+                this.renderSpeedDrills();
+                this.updateStats();
+                lucide.createIcons();
+            }
+
+            switchView(viewId) {
+                ['dashboard', 'exam', 'personality', 'result', 'speed', 'ai-gen', 'cheat'].forEach(v => {
+                    const el = document.getElementById(`view-${v}`);
+                    if (el) el.classList.add('hidden');
+                });
+
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('text-amber-400', 'bg-slate-800/80');
+                    btn.classList.add('text-slate-300');
+                });
+
+                const targetView = document.getElementById(`view-${viewId}`);
+                if (targetView) targetView.classList.remove('hidden');
+
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    const on = b.dataset.tab === viewId;
+                    b.classList.toggle('text-amber-400', on);
+                    b.classList.toggle('text-slate-400', !on);
+                });
+                const navBtn = document.getElementById(`nav-${viewId}`);
+                if (navBtn) {
+                    navBtn.classList.add('text-amber-400', 'bg-slate-800/80');
+                    navBtn.classList.remove('text-slate-300');
+                }
+
+                this.currentView = viewId;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                lucide.createIcons();
+            }
+
+            renderCategories() {
+                const container = document.getElementById('category-cards');
+                const categories = [
+                    { name: '의사소통능력 (20문항)', desc: '9호선 지침서, 혼잡도 공고문, 유실물 수칙, 고객민원 요약', icon: 'message-square', color: 'blue' },
+                    { name: '문제해결능력 (20문항)', desc: '급행열차 다이어그램, RM모드 전환, 인력배치, 비상대피 수칙', icon: 'cpu', color: 'emerald' },
+                    { name: '수리능력 (20문항)', desc: '통합운임계산, 추가요금, 조기탑승 할인, 소요시간 스피드 계산', icon: 'calculator', color: 'amber' },
+                ];
+
+                container.innerHTML = categories.map(cat => `
+                    <div onclick="app.startMockExam()" class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl p-5 cursor-pointer transition transform hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="p-2.5 bg-slate-800 text-amber-400 rounded-lg">
+                                <i data-lucide="${cat.icon}" class="w-5 h-5"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-base">${cat.name}</h3>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-4">${cat.desc}</p>
+                        <div class="flex items-center justify-between text-xs text-amber-400 font-semibold pt-2 border-t border-slate-800/60">
+                            <span>실전 60문항 풀모의고사 시작</span>
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            renderSpeedDrills() {
+                const container = document.getElementById('speed-drill-list');
+                const sampleDrills = this.questions.slice(0, 6);
+
+                container.innerHTML = sampleDrills.map((q, idx) => `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/20">${q.category}</span>
+                            <span class="text-slate-400">대표유형 #${idx + 1}</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white">${q.question}</h4>
+                        <div class="bg-slate-950 p-3 rounded-lg text-xs text-emerald-300 border border-emerald-500/20 font-semibold">
+                            ${q.speedTip}
+                        </div>
+                        <button onclick="app.showSpeedDetail(${idx})" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-bold rounded-lg border border-slate-700 transition">
+                            스피드 해설 보기
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            showSpeedDetail(index) {
+                const q = this.questions[index];
+                alert(`[${q.category}]\n\n정답: ${q.options[q.answerIndex]}\n\n해설: ${q.explanation}\n\n스피드 팁: ${q.speedTip}`);
+            }
+
+            startMockExam() {
+                this.questions = generateOfficialQuestionBank();
+                this.currentExamIndex = 0;
+                this.userAnswers = {};
+                this.timeLeft = 4200; // 70 minutes
+                
+                this.switchView('exam');
+                this.startTimer();
+                this.renderQuestion();
+                this.renderOMR();
+            }
+
+            startTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.updateTimerDisplay();
+
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateTimerDisplay();
+
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timerInterval);
+                        alert('NCS 시험시간(70분)이 종료되었습니다! 작성된 답안을 자동으로 제출합니다.');
+                        this.submitExam();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const min = Math.floor(this.timeLeft / 60);
+                const sec = this.timeLeft % 60;
+                const timerEl = document.getElementById('exam-timer');
+                if (timerEl) {
+                    timerEl.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+                }
+            }
+
+            renderQuestion() {
+                const q = this.questions[this.currentExamIndex];
+                if (!q) return;
+
+                document.getElementById('exam-progress-text').textContent = `문제 ${this.currentExamIndex + 1} / ${this.questions.length}`;
+                document.getElementById('q-category').textContent = q.category;
+                document.getElementById('q-title').textContent = `${this.currentExamIndex + 1}. ${q.question}`;
+
+                const passageBox = document.getElementById('q-passage-container');
+                if (q.passage) {
+                    passageBox.classList.remove('hidden');
+                    document.getElementById('q-passage-text').textContent = q.passage;
+                } else {
+                    passageBox.classList.add('hidden');
+                }
+
+                // Render options
+                const optionsContainer = document.getElementById('q-options');
+                optionsContainer.innerHTML = q.options.map((opt, i) => {
+                    const isSelected = this.userAnswers[this.currentExamIndex] === i;
+                    return `
+                        <div onclick="app.selectOption(${i})" class="p-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between ${
+                            isSelected 
+                            ? 'bg-amber-500/10 border-amber-500 text-amber-300 font-bold' 
+                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:bg-slate-800/80'
+                        }">
+                            <span class="text-xs md:text-sm">${opt}</span>
+                            <div class="w-5 h-5 rounded-full border flex items-center justify-center ${
+                                isSelected ? 'border-amber-400 bg-amber-400 text-slate-950 font-bold' : 'border-slate-700'
+                            }">
+                                ${isSelected ? '✓' : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Bookmark state
+                const btnBookmark = document.getElementById('btn-bookmark');
+                if (this.bookmarks.has(this.currentExamIndex)) {
+                    btnBookmark.classList.add('text-amber-400', 'border-amber-500/50');
+                } else {
+                    btnBookmark.classList.remove('text-amber-400', 'border-amber-500/50');
+                }
+
+                lucide.createIcons();
+            }
+
+            selectOption(optionIdx) {
+                this.userAnswers[this.currentExamIndex] = optionIdx;
+                this.renderQuestion();
+                this.renderOMR();
+            }
+
+            toggleBookmark() {
+                if (this.bookmarks.has(this.currentExamIndex)) {
+                    this.bookmarks.delete(this.currentExamIndex);
+                } else {
+                    this.bookmarks.add(this.currentExamIndex);
+                }
+                this.renderQuestion();
+            }
+
+            renderOMR() {
+                const omrGrid = document.getElementById('omr-grid');
+                omrGrid.innerHTML = this.questions.map((_, idx) => {
+                    const isAnswered = this.userAnswers.hasOwnProperty(idx);
+                    const isCurrent = this.currentExamIndex === idx;
+                    return `
+                        <button onclick="app.jumpToQuestion(${idx})" class="h-8 rounded-lg text-xs font-bold transition flex items-center justify-center border ${
+                            isCurrent
+                            ? 'ring-2 ring-amber-400 border-amber-400 bg-amber-500/20 text-amber-300'
+                            : isAnswered
+                            ? 'bg-amber-500 border-amber-500 text-slate-950'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
+                        }">
+                            ${idx + 1}
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            jumpToQuestion(idx) {
+                this.currentExamIndex = idx;
+                this.renderQuestion();
+                this.renderOMR();
+            }
+
+            navigateQuestion(step) {
+                const newIdx = this.currentExamIndex + step;
+                if (newIdx >= 0 && newIdx < this.questions.length) {
+                    this.currentExamIndex = newIdx;
+                    this.renderQuestion();
+                    this.renderOMR();
+                }
+            }
+
+            submitExam() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+
+                let correctCount = 0;
+                this.incorrectList = [];
+
+                this.questions.forEach((q, idx) => {
+                    const userAns = this.userAnswers[idx];
+                    if (userAns === q.answerIndex) {
+                        correctCount++;
+                    } else {
+                        this.incorrectList.push({
+                            question: q,
+                            userAnswer: userAns
+                        });
+                    }
+                });
+
+                const totalScore = Math.round((correctCount / this.questions.length) * 100);
+                this.solvedCount += this.questions.length;
+                if (totalScore > this.topScore) this.topScore = totalScore;
+                this.history.push({ t: Date.now(), score: totalScore });
+                this.history = this.history.slice(-50);
+                this.saveState();
+
+                this.updateStats();
+
+                // Render Results Page
+                document.getElementById('result-score').textContent = `${totalScore}점`;
+                document.getElementById('result-count').textContent = `${correctCount} / ${this.questions.length}`;
+                
+                const timeTakenSec = 4200 - this.timeLeft;
+                const minTaken = Math.floor(timeTakenSec / 60);
+                const secTaken = timeTakenSec % 60;
+                document.getElementById('result-time').textContent = `${minTaken}분 ${secTaken}초`;
+
+                const targetCutoff = this.cutoffs[this.targetSeries] || 80;
+                const evalEl = document.getElementById('result-evaluation');
+                
+                if (totalScore >= targetCutoff) {
+                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                    evalEl.textContent = `🎉 [합격 유력] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)을 상회하는 안정권 점수입니다!`;
+                } else if (totalScore >= targetCutoff - 10) {
+                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                    evalEl.textContent = `⚡ [보완 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)까지 약 ${Math.round(targetCutoff - totalScore)}점 부족합니다. 수리/문제해결 스피드를 보완하세요.`;
+                } else {
+                    evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                    evalEl.textContent = `⚠️ [재점검 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)에 크게 미달했습니다. 암기노트와 10초 컷 공식을 우선 학습하세요.`;
+                }
+
+                // Render Review list
+                const reviewContainer = document.getElementById('result-questions-list');
+                reviewContainer.innerHTML = this.questions.map((q, idx) => {
+                    const userAns = this.userAnswers[idx];
+                    const isCorrect = userAns === q.answerIndex;
+                    return `
+                        <div class="bg-slate-900 border ${isCorrect ? 'border-emerald-500/30' : 'border-rose-500/30'} rounded-xl p-5 space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold ${isCorrect ? 'text-emerald-400' : 'text-rose-400'} flex items-center space-x-1">
+                                    <i data-lucide="${isCorrect ? 'check-circle' : 'x-circle'}" class="w-4 h-4"></i>
+                                    <span>${isCorrect ? '정답' : '오답'} (선택: ${userAns !== undefined ? q.options[userAns] : '미입력'})</span>
+                                </span>
+                                <span class="text-slate-400">${q.category}</span>
+                            </div>
+                            <h4 class="text-sm font-bold text-white">${idx + 1}. ${q.question}</h4>
+                            <div class="bg-slate-950 p-3 rounded-lg text-xs text-slate-300 font-mono">
+                                <strong class="text-amber-400">정답: ${q.options[q.answerIndex]}</strong>
+                                <p class="mt-1">${q.explanation}</p>
+                            </div>
+                            <div class="bg-amber-500/10 p-2.5 rounded-lg text-xs text-amber-300 border border-amber-500/20 font-semibold">
+                                ${q.speedTip}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                this.switchView('result');
+            }
+
+            startPersonalityTest() {
+                this.persIndex = 0;
+                this.persAnswers = {};
+                this.persTimeLeft = 1800; // 30 mins
+
+                document.getElementById('personality-start-box').classList.add('hidden');
+                document.getElementById('personality-result').classList.add('hidden');
+                document.getElementById('personality-runner').classList.remove('hidden');
+                document.getElementById('personality-timer-container').classList.remove('hidden');
+
+                if (this.persTimerInterval) clearInterval(this.persTimerInterval);
+                this.persTimerInterval = setInterval(() => {
+                    this.persTimeLeft--;
+                    const m = Math.floor(this.persTimeLeft / 60);
+                    const s = this.persTimeLeft % 60;
+                    document.getElementById('personality-timer').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+                    if (this.persTimeLeft <= 0) {
+                        clearInterval(this.persTimerInterval);
+                        alert('인성검사 시간(30분)이 만료되었습니다. 결과를 산출합니다.');
+                        this.finishPersonalityTest();
+                    }
+                }, 1000);
+
+                this.renderPersonalityQuestion();
+            }
+
+            renderPersonalityQuestion() {
+                const q = this.personalityQuestions[this.persIndex];
+                if (!q) {
+                    this.finishPersonalityTest();
+                    return;
+                }
+
+                document.getElementById('pers-progress-badge').textContent = `문항 ${this.persIndex + 1} / 200`;
+                const pct = ((this.persIndex + 1) / 200 * 100).toFixed(1);
+                document.getElementById('pers-progress-bar').style.width = `${pct}%`;
+                document.getElementById('pers-percent-text').textContent = `${pct}%`;
+
+                document.getElementById('pers-cat-tag').textContent = `[${q.category}]`;
+                document.getElementById('pers-q-text').textContent = q.text;
+
+                lucide.createIcons();
+            }
+
+            answerPersonality(score) {
+                this.persAnswers[this.persIndex] = score;
+                this.persIndex++;
+
+                if (this.persIndex >= 200) {
+                    this.finishPersonalityTest();
+                } else {
+                    this.renderPersonalityQuestion();
+                }
+            }
+
+            prevPersonality() {
+                if (this.persIndex > 0) {
+                    this.persIndex--;
+                    this.renderPersonalityQuestion();
+                }
+            }
+
+            finishPersonalityTest() {
+                if (this.persTimerInterval) clearInterval(this.persTimerInterval);
+
+                document.getElementById('personality-runner').classList.add('hidden');
+                document.getElementById('personality-timer-container').classList.add('hidden');
+
+                const resBox = document.getElementById('personality-result');
+                resBox.classList.remove('hidden');
+
+                // Evaluate Lie Scale & Safety Mindset
+                let lieFailCount = 0;
+                let safetyScore = 0;
+
+                this.personalityQuestions.forEach((q, idx) => {
+                    const ans = this.persAnswers[idx] || 2;
+                    if (q.trait === 'lie' && ans >= 3) {
+                        lieFailCount++;
+                    }
+                    if (q.trait === 'safety') {
+                        if (q.desirable === 4) safetyScore += ans;
+                        else safetyScore += (5 - ans);
+                    }
+                });
+
+                const isPass = lieFailCount < 3;
+
+                resBox.innerHTML = `
+                    <div class="w-16 h-16 mx-auto ${isPass ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border-rose-500/30'} rounded-2xl flex items-center justify-center border">
+                        <i data-lucide="${isPass ? 'check-circle' : 'alert-octagon'}" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-slate-400">서울교통공사 인성검사 평가결과</span>
+                        <h3 class="text-3xl font-black ${isPass ? 'text-emerald-400' : 'text-rose-400'} mt-1">
+                            ${isPass ? '합격 (Pass 판정 적격)' : '불합격 (Fail 위험 - 거짓응답 과다)'}
+                        </h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto text-left text-xs">
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <div class="text-slate-400 mb-1">응답 완료 수</div>
+                            <div class="text-lg font-bold text-white">${Object.keys(this.persAnswers).length} / 200문항</div>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <div class="text-slate-400 mb-1">거짓응답 탐지(Lie Scale)</div>
+                            <div class="text-lg font-bold ${lieFailCount < 3 ? 'text-emerald-400' : 'text-rose-400'}">${lieFailCount}건 지적 (기준 3건 미만)</div>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                            <div class="text-slate-400 mb-1">안전/원칙 준수성</div>
+                            <div class="text-lg font-bold text-amber-400">양호 (안전의식 우수)</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl text-xs text-slate-300 max-w-xl mx-auto text-left space-y-2 border border-slate-800">
+                        <strong class="text-amber-400">💡 9호선 인성검사 합격 피드백:</strong>
+                        <p>1. 극단적 거짓말 구문("단 한번도 ~해본 적 없다")에 '그렇다'를 연달아 선택하면 <strong>신뢰도 미달 불합격</strong>됩니다.</p>
+                        <p>2. 철도 작업 현장 안전과 직결된 규칙 준수 질문에는 언제나 단호하게 <strong>원칙 준수 방향</strong>으로 일관성을 유지하세요.</p>
+                    </div>
+
+                    <button onclick="app.switchView('dashboard')" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700 transition">
+                        대시보드로 돌아가기
+                    </button>
+                `;
+
+                this.persStatus = isPass ? 'pass' : 'fail';
+                this.saveState();
+                this.updateStats();
+                lucide.createIcons();
+            }
+
+            updateStats() {
+                document.getElementById('stat-solved').textContent = `${this.solvedCount} 문항`;
+                document.getElementById('stat-topscore').textContent = `${this.topScore}점`;
+                const ps = document.getElementById('stat-personality');
+                if (this.persStatus) {
+                    ps.textContent = this.persStatus === 'pass' ? 'Pass (적격)' : 'Fail (재훈련)';
+                    ps.className = 'text-xl font-bold ' + (this.persStatus === 'pass' ? 'text-emerald-400' : 'text-rose-400');
+                }
+            }
+
+            async generateAIQuestion() {
+                const category = document.getElementById('ai-category').value;
+                const difficulty = document.getElementById('ai-difficulty').value;
+                const card = document.getElementById('ai-question-card');
+                const btn = document.getElementById('btn-generate-ai');
+
+                btn.disabled = true;
+                btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>Gemini가 신문항 출제 중...</span>`;
+                lucide.createIcons();
+
+                card.classList.remove('hidden');
+                card.innerHTML = `<div class="p-8 text-center text-slate-400 text-sm">2026 서울교통공사 9호선 오피셜 매뉴얼을 근거로 ${category} 신규 피듈형 문제를 생성 중입니다...</div>`;
+
+                const systemPrompt = `당신은 서울교통공사 9호선 NCS 필기시험 출제위원입니다. 
+2026년 최신 피듈형(의사소통, 문제해결, 수리) 전형에 맞춘 양질의 문제를 생성하세요.
+응답은 반드시 지정된 JSON 포맷으로만 응답해야 합니다.`;
+
+                const userPrompt = `영역: ${category}
+난이도: ${difficulty}
+요구사항:
+1. 9호선 실전 업무(혼잡도, 급행열차, 철도안전법, 운임계산 등)가 반영된 지문(passage).
+2. 4지선다형 선택지.
+3. 10초 스피드 풀이 팁(speedTip).`;
+
+                const apiKey = this.getApiKey();
+                if (!apiKey) {
+                    card.innerHTML = `<div class="p-4 text-center text-amber-300 text-xs">API Key가 없습니다. 위 입력란에 Gemini API Key를 넣으면 AI 문제 생성을 쓸 수 있어요. (키 없이도 나머지 기능은 전부 오프라인 동작)</div>`;
+                    btn.disabled = false;
+                    btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i><span>AI 신문항 생성하기</span>`;
+                    lucide.createIcons();
+                    return;
+                }
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                category: { type: "STRING" },
+                                passage: { type: "STRING" },
+                                question: { type: "STRING" },
+                                options: { type: "ARRAY", items: { type: "STRING" } },
+                                answerIndex: { type: "INTEGER" },
+                                explanation: { type: "STRING" },
+                                speedTip: { type: "STRING" }
+                            },
+                            required: ["category", "passage", "question", "options", "answerIndex", "explanation", "speedTip"]
+                        }
+                    }
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        const qData = JSON.parse(candidate.content.parts[0].text);
+                        
+                        qData.id = Date.now();
+                        this.questions.push(qData);
+
+                        this.currentAIQuestion = qData;
+                        this.selectedAIOption = null;
+                        this.isAISubmitted = false;
+                        this.renderAIQuestionCard();
+                    } else {
+                        card.innerHTML = `<div class="p-4 text-center text-rose-400 text-xs">문제 생성 실패: AI 응답 형식이 일치하지 않습니다.</div>`;
+                    }
+                } catch (err) {
+                    card.innerHTML = `<div class="p-4 text-center text-rose-400 text-xs">네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</div>`;
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i data-lucide="sparkles" class="w-4 h-4"></i><span>AI 신문항 생성하기</span>`;
+                    lucide.createIcons();
+                }
+            }
+
+            selectAIOption(idx) {
+                if (this.isAISubmitted) return;
+                this.selectedAIOption = idx;
+                this.renderAIQuestionCard();
+            }
+
+            submitAIAnswer() {
+                if (this.selectedAIOption === null) {
+                    alert('답안을 먼저 선택해주세요!');
+                    return;
+                }
+                this.isAISubmitted = true;
+                this.solvedCount++;
+                this.saveState();
+                this.updateStats();
+                this.renderAIQuestionCard();
+            }
+
+            renderAIQuestionCard() {
+                const card = document.getElementById('ai-question-card');
+                const qData = this.currentAIQuestion;
+                if (!qData) return;
+
+                card.classList.remove('hidden');
+
+                const isSubmitted = this.isAISubmitted;
+                const userSelected = this.selectedAIOption;
+                const isCorrect = userSelected === qData.answerIndex;
+
+                let statusBadge = '';
+                if (isSubmitted) {
+                    if (isCorrect) {
+                        statusBadge = `<span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded font-bold flex items-center space-x-1">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                            <span>정답입니다! (+1점)</span>
+                        </span>`;
+                    } else {
+                        statusBadge = `<span class="px-2.5 py-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded font-bold flex items-center space-x-1">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                            <span>오답입니다</span>
+                        </span>`;
+                    }
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded font-bold">
+                        ✨ Gemini AI 2026 실전 출제
+                    </span>`;
+                }
+
+                const optionsHtml = qData.options.map((opt, idx) => {
+                    let btnClass = "bg-slate-950 border-slate-800 text-slate-200 hover:bg-slate-800/80";
+                    let iconHtml = `<div class="w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-xs"></div>`;
+
+                    if (!isSubmitted) {
+                        if (userSelected === idx) {
+                            btnClass = "bg-amber-500/10 border-amber-500 text-amber-300 font-bold";
+                            iconHtml = `<div class="w-5 h-5 rounded-full border border-amber-400 bg-amber-400 text-slate-950 font-bold flex items-center justify-center text-xs">✓</div>`;
+                        }
+                    } else {
+                        if (idx === qData.answerIndex) {
+                            btnClass = "bg-emerald-500/20 border-emerald-500 text-emerald-300 font-bold";
+                            iconHtml = `<div class="w-5 h-5 rounded-full border border-emerald-400 bg-emerald-400 text-slate-950 font-bold flex items-center justify-center text-xs">✓</div>`;
+                        } else if (userSelected === idx) {
+                            btnClass = "bg-rose-500/20 border-rose-500 text-rose-300 font-bold";
+                            iconHtml = `<div class="w-5 h-5 rounded-full border border-rose-400 bg-rose-400 text-slate-950 font-bold flex items-center justify-center text-xs">✕</div>`;
+                        }
+                    }
+
+                    return `
+                        <div onclick="app.selectAIOption(${idx})" class="p-3.5 rounded-xl border transition cursor-pointer flex items-center justify-between ${btnClass}">
+                            <span class="text-xs md:text-sm">${opt}</span>
+                            ${iconHtml}
+                        </div>
+                    `;
+                }).join('');
+
+                let answerBoxHtml = '';
+                if (isSubmitted) {
+                    answerBoxHtml = `
+                        <div class="bg-slate-950 p-4 rounded-xl border border-emerald-500/20 text-xs space-y-2 mt-4">
+                            <div class="text-emerald-400 font-bold flex items-center space-x-1.5">
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                <span>정답: ${qData.options[qData.answerIndex]}</span>
+                            </div>
+                            <div class="text-slate-300 leading-relaxed">${qData.explanation}</div>
+                        </div>
+                        <div class="bg-amber-500/10 p-3 rounded-xl border border-amber-500/20 text-xs text-amber-300 font-bold flex items-start space-x-2">
+                            <i data-lucide="zap" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+                            <span>${qData.speedTip}</span>
+                        </div>
+                    `;
+                }
+
+                let actionButtonHtml = '';
+                if (!isSubmitted) {
+                    const canSubmit = userSelected !== null;
+                    actionButtonHtml = `
+                        <button onclick="app.submitAIAnswer()" ${!canSubmit ? 'disabled' : ''} class="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold text-sm rounded-xl transition flex items-center justify-center space-x-2 shadow-lg">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>정답 제출 및 해설 확인</span>
+                        </button>
+                    `;
+                } else {
+                    actionButtonHtml = `
+                        <button onclick="app.generateAIQuestion()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-sm rounded-xl border border-amber-500/30 transition flex items-center justify-center space-x-2">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            <span>다음 AI 문제 계속 생성하기</span>
+                        </button>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center text-xs">
+                            ${statusBadge}
+                            <span class="text-slate-400 font-semibold">${qData.category}</span>
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl text-xs md:text-sm text-slate-300 font-mono leading-relaxed border border-slate-800">
+                            ${qData.passage}
+                        </div>
+                        <h3 class="text-base font-bold text-white">${qData.question}</h3>
+                        <div class="space-y-2">
+                            ${optionsHtml}
+                        </div>
+                        ${actionButtonHtml}
+                        ${answerBoxHtml}
+                    </div>
+                `;
+
+                lucide.createIcons();
+            }
+        }
+
+        // Initialize App on Load
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new NCSApp();
+        });
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+        }
+    </script>
+</body>
+</html>

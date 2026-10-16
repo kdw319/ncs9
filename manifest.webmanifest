@@ -1,0 +1,17 @@
+{
+  "name": "9호선 NCS & 인성 시뮬레이터",
+  "short_name": "9호선 NCS",
+  "description": "서울교통공사 9호선 NCS(60문/70분) · 인성검사(200문/30분) 오프라인 학습 앱",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
