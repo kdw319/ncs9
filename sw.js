@@ -1,5 +1,5 @@
 // 캐시 파일을 수정하면 VERSION을 올려야 기존 설치 기기에 반영됩니다.
-const VERSION = 'ncs9-v2';
+const VERSION = 'ncs9-v3';
 const ASSETS = [
   './',
   './index.html',

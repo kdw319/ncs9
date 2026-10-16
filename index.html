@@ -108,6 +108,10 @@
             </nav>
 
             <div class="flex items-center space-x-2">
+                <button id="install-btn" onclick="pwaInstall.start()" class="hidden items-center space-x-1 bg-amber-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl hover:bg-amber-400 transition">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>앱 설치</span>
+                </button>
                 <!-- Target Job Series Selector -->
                 <div class="flex items-center space-x-1 bg-slate-800/90 border border-amber-500/30 px-3 py-1 rounded-xl text-xs">
                     <i data-lucide="crosshair" class="w-3.5 h-3.5 text-amber-400"></i>
@@ -698,6 +702,20 @@
         <button onclick="app.switchView('ai-gen')" data-tab="ai-gen" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="sparkles" class="w-5 h-5"></i>AI</button>
         <button onclick="app.switchView('cheat')" data-tab="cheat" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="book-open" class="w-5 h-5"></i>암기</button>
     </nav>
+
+    <!-- PWA Install Banner -->
+    <div id="install-banner" class="hidden fixed inset-x-3 z-[60] md:left-auto md:right-4 md:w-96 bg-slate-800 border border-amber-500/40 rounded-2xl shadow-2xl p-4" style="bottom:calc(4.25rem + env(safe-area-inset-bottom))">
+        <div class="flex items-start gap-3">
+            <img src="icons/icon-192.png" alt="" class="w-11 h-11 rounded-xl shrink-0">
+            <div class="flex-1 min-w-0">
+                <p class="font-bold text-sm text-white">홈 화면에 앱으로 설치</p>
+                <p id="install-desc" class="text-xs text-slate-300 mt-0.5">설치하면 오프라인에서도 바로 실행됩니다.</p>
+            </div>
+            <button onclick="pwaInstall.dismiss()" aria-label="닫기" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div id="install-steps" class="hidden mt-3 text-xs text-slate-200 bg-slate-900/70 rounded-xl p-3 leading-relaxed"></div>
+        <button id="install-cta" onclick="pwaInstall.start()" class="mt-3 w-full bg-amber-500 text-slate-950 font-bold text-sm py-2.5 rounded-xl hover:bg-amber-400 transition">설치하기</button>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
@@ -1612,6 +1630,82 @@ startPersonalityTest() {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
         }
+    </script>
+    <script>
+        // PWA 설치 UX: 네이티브 프롬프트(beforeinstallprompt) 우선, 미지원 환경은 수동 안내로 대체
+        const pwaInstall = (() => {
+            const KEY = 'ncs9-install-dismissed';
+            const WEEK = 7 * 24 * 3600 * 1000;
+            const $ = (id) => document.getElementById(id);
+            const ua = navigator.userAgent;
+            const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+            const inApp = /KAKAOTALK|NAVER|Instagram|FBAN|FBAV|Line\/|; wv\)/i.test(ua);
+            let deferred = null;
+
+            const dismissed = () => {
+                try { return Date.now() - Number(localStorage.getItem(KEY) || 0) < WEEK; } catch (e) { return false; }
+            };
+            const toggle = (el, show, display) => {
+                el.classList.toggle('hidden', !show);
+                if (display) el.classList.toggle(display, show);
+            };
+
+            function showBanner() {
+                if (standalone() || dismissed()) return;
+                if (!deferred && /iPhone|iPad|iPod/.test(ua)) return;
+                if (inApp) {
+                    $('install-desc').textContent = '현재 앱 내 브라우저에서는 설치할 수 없어요. Chrome에서 열어주세요.';
+                    $('install-cta').textContent = 'Chrome에서 열기';
+                }
+                toggle($('install-banner'), true);
+                lucide.createIcons();
+            }
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferred = e;
+                toggle($('install-btn'), !standalone(), 'flex');
+                showBanner();
+            });
+
+            window.addEventListener('appinstalled', () => {
+                deferred = null;
+                toggle($('install-banner'), false);
+                toggle($('install-btn'), false, 'flex');
+            });
+
+            // 프롬프트 이벤트가 오지 않는 안드로이드(인앱 브라우저·삼성 인터넷 등)용 수동 안내
+            window.addEventListener('load', () => setTimeout(() => {
+                if (deferred || standalone() || !/Android/.test(ua)) return;
+                toggle($('install-btn'), true, 'flex');
+                showBanner();
+            }, 3000));
+
+            return {
+                async start() {
+                    if (deferred) {
+                        deferred.prompt();
+                        await deferred.userChoice;
+                        deferred = null;
+                        toggle($('install-banner'), false);
+                        toggle($('install-btn'), false, 'flex');
+                        return;
+                    }
+                    if (inApp) {
+                        location.href = 'intent://' + location.host + location.pathname + '#Intent;scheme=https;package=com.android.chrome;end';
+                        return;
+                    }
+                    const steps = $('install-steps');
+                    steps.innerHTML = '브라우저 우측 상단 <b>⋮ 메뉴</b> → <b>앱 설치</b>(또는 <b>홈 화면에 추가</b>)를 눌러주세요.';
+                    toggle(steps, true);
+                    toggle($('install-banner'), true);
+                },
+                dismiss() {
+                    try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+                    toggle($('install-banner'), false);
+                }
+            };
+        })();
     </script>
 </body>
 </html>
