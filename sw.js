@@ -1,10 +1,11 @@
 // 캐시 파일을 수정하면 VERSION을 올려야 기존 설치 기기에 반영됩니다.
-const VERSION = 'ncs9-v5';
+const VERSION = 'ncs9-v6';
 const ASSETS = [
   './',
   './index.html',
   './questions.js',
   './questions2.js',
+  './interview.js',
   './manifest.webmanifest',
   './vendor/tailwind.js',
   './vendor/lucide.min.js',

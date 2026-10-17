@@ -97,6 +97,10 @@
                     <i data-lucide="zap" class="w-4 h-4"></i>
                     <span>유형별 10초 컷</span>
                 </button>
+                <button onclick="app.switchView('interview')" id="nav-interview" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
+                    <i data-lucide="mic" class="w-4 h-4 text-violet-300"></i>
+                    <span>면접 연습</span>
+                </button>
                 <button onclick="app.switchView('ai-gen')" id="nav-aigen" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
                     <span>AI 무한생성</span>
@@ -158,6 +162,10 @@
                         <button onclick="app.switchView('personality')" class="px-5 py-3 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center space-x-2 text-sm">
                             <i data-lucide="user-check" class="w-5 h-5"></i>
                             <span>인성검사 훈련 (참고용)</span>
+                        </button>
+                        <button onclick="app.switchView('interview')" class="px-5 py-3 bg-violet-700 hover:bg-violet-600 text-white font-bold rounded-xl shadow-lg shadow-violet-900/30 transition flex items-center space-x-2 text-sm">
+                            <i data-lucide="mic" class="w-5 h-5"></i>
+                            <span>면접 연습 (기출 17문)</span>
                         </button>
                     </div>
                 </div>
@@ -564,6 +572,11 @@
             </div>
         </div>
 
+        <!-- 5.5 INTERVIEW VIEW -->
+        <div id="view-interview" class="hidden space-y-4">
+            <div id="iv-root" class="space-y-4"></div>
+        </div>
+
         <!-- 6. AI CUSTOM GENERATOR VIEW -->
         <div id="view-ai-gen" class="hidden space-y-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
@@ -685,11 +698,12 @@
     </main>
 
     <!-- Mobile Bottom Tab Bar -->
-    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 grid grid-cols-6 text-[10px]" style="padding-bottom:env(safe-area-inset-bottom)">
+    <nav class="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 grid grid-cols-7 text-[9px]" style="padding-bottom:env(safe-area-inset-bottom)">
         <button onclick="app.switchView('dashboard')" data-tab="dashboard" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="layout-dashboard" class="w-5 h-5"></i>홈</button>
         <button onclick="app.startMockExam()" data-tab="exam" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="file-text" class="w-5 h-5"></i>NCS</button>
         <button onclick="app.switchView('personality')" data-tab="personality" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="user-check" class="w-5 h-5"></i>인성</button>
         <button onclick="app.switchView('speed')" data-tab="speed" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="zap" class="w-5 h-5"></i>10초컷</button>
+        <button onclick="app.switchView('interview')" data-tab="interview" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="mic" class="w-5 h-5"></i>면접</button>
         <button onclick="app.switchView('ai-gen')" data-tab="ai-gen" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="sparkles" class="w-5 h-5"></i>AI생성</button>
         <button onclick="app.switchView('cheat')" data-tab="cheat" class="tab-btn py-2 flex flex-col items-center gap-0.5 text-slate-400"><i data-lucide="book-open" class="w-5 h-5"></i>암기</button>
     </nav>
@@ -708,6 +722,9 @@
         <button id="install-cta" onclick="pwaInstall.start()" class="mt-3 w-full bg-amber-500 text-slate-950 font-bold text-sm py-2.5 rounded-xl hover:bg-amber-400 transition">설치하기</button>
     </div>
 
+    <!-- Interview study modal -->
+    <div id="iv-modal" class="hidden fixed inset-0 z-[80] bg-slate-950 overflow-y-auto"></div>
+
     <!-- Footer -->
     <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
         <p>서울교통공사 9호선운영부문 NCS(10영역 80문항 90분) 연습용 학습 앱 · 출제 형식은 합격 후기 기준이며 공식 공고로 확인하세요</p>
@@ -716,6 +733,7 @@
     <!-- JavaScript Application Engine -->
     <script src="questions.js"></script>
     <script src="questions2.js"></script>
+    <script src="interview.js"></script>
     <script>
         // 문제 은행은 questions.js(NCSBank)에서 만든다.
         function generateOfficialQuestionBank() {
@@ -887,7 +905,7 @@ class NCSApp {
             }
 
             switchView(viewId) {
-                ['dashboard', 'exam', 'personality', 'result', 'speed', 'ai-gen', 'cheat'].forEach(v => {
+                ['dashboard', 'exam', 'personality', 'result', 'speed', 'interview', 'ai-gen', 'cheat'].forEach(v => {
                     const el = document.getElementById(`view-${v}`);
                     if (el) el.classList.add('hidden');
                 });
@@ -912,6 +930,7 @@ class NCSApp {
                 }
 
                 this.currentView = viewId;
+                if (viewId === 'interview' && window.IV) IV.render();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 lucide.createIcons();
             }
