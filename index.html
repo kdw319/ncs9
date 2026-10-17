@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="icons/icon-180.png">
-    <title>9호선 NCS 시뮬레이터 (10영역 80문항)</title>
+    <title>메트로9호선 NCS 시뮬레이터 (3영역 60문항)</title>
     <!-- Tailwind CSS -->
     <script src="vendor/tailwind.js"></script>
     <!-- Lucide Icons -->
@@ -75,7 +75,7 @@
                         <span class="font-extrabold text-sm sm:text-base md:text-lg text-white tracking-tight whitespace-nowrap">9호선 NCS & 인성</span>
                         <span class="hidden sm:inline px-2 py-0.5 text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full">2026 실전 전형</span>
                     </div>
-                    <p class="hidden sm:block text-xs text-slate-400">NCS 10영역 80문항 · 90분 (후기 기준) + 인성 훈련</p>
+                    <p class="hidden sm:block text-xs text-slate-400">NCS 3영역 60문항 · 70분 + 인성 200문항 · 30분</p>
                 </div>
             </div>
 
@@ -87,7 +87,7 @@
                 </button>
                 <button onclick="app.startMockExam()" id="nav-exam" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
                     <i data-lucide="file-text" class="w-4 h-4"></i>
-                    <span>NCS 실전 (90분/80문)</span>
+                    <span>NCS 실전 (70분/60문)</span>
                 </button>
                 <button onclick="app.switchView('personality')" id="nav-personality" class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 text-slate-300 hover:text-white hover:bg-slate-800">
                     <i data-lucide="user-check" class="w-4 h-4 text-emerald-400"></i>
@@ -119,13 +119,14 @@
                 <!-- Target Job Series Selector -->
                 <div class="flex items-center space-x-1 bg-slate-800/90 border border-amber-500/30 px-3 py-1 rounded-xl text-xs">
                     <i data-lucide="crosshair" class="w-3.5 h-3.5 text-amber-400"></i>
-                    <span class="text-slate-400 hidden sm:inline">목표 직렬:</span>
-                    <select id="target-series-select" onchange="app.changeTargetSeries(this.value)" class="bg-transparent text-amber-400 font-bold focus:outline-none cursor-pointer">
-                        <option value="사무" class="bg-slate-900 text-slate-200">사무 (84.28)</option>
-                        <option value="차량" class="bg-slate-900 text-slate-200">차량 (컷 77.59점)</option>
-                        <option value="토목" class="bg-slate-900 text-slate-200">토목 (컷 76.40점)</option>
-                        <option value="전자" class="bg-slate-900 text-slate-200">전자 (컷 75.27점)</option>
-                        <option value="승무" class="bg-slate-900 text-slate-200">승무 (컷 73.50점)</option>
+                    <span class="text-slate-400 hidden sm:inline">목표 점수:</span>
+                    <select id="target-series-select" onchange="app.changeTargetScore(this.value)" class="bg-transparent text-amber-400 font-bold focus:outline-none cursor-pointer">
+                        <option value="70" class="bg-slate-900 text-slate-200">70점</option>
+                        <option value="75" class="bg-slate-900 text-slate-200">75점</option>
+                        <option value="80" class="bg-slate-900 text-slate-200">80점</option>
+                        <option value="85" class="bg-slate-900 text-slate-200">85점</option>
+                        <option value="90" class="bg-slate-900 text-slate-200">90점</option>
+                        <option value="95" class="bg-slate-900 text-slate-200">95점</option>
                     </select>
                 </div>
             </div>
@@ -142,26 +143,26 @@
                 <div class="relative z-10 max-w-3xl">
                     <div class="inline-flex items-center space-x-2 bg-amber-500/10 text-amber-300 px-3 py-1 rounded-full text-xs font-semibold mb-3 border border-amber-500/30">
                         <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i>
-                        <span>2023 합격 후기 기준: NCS 10영역 80문항 / 90분 · 영역별 8문항</span>
+                        <span id="dday-badge">서울시메트로9호선(주) 2026 하반기 · 사무/역무 · 필기(인성·NCS)</span>
                     </div>
                     <h1 class="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight mb-3">
-                        서울교통공사 9호선운영부문<br>
+                        서울시메트로9호선(주)<br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-[#BDB092] to-amber-500">
                             NCS 필기 100점 & 인성 합격 패스
                         </span>
                     </h1>
                     <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-6">
                         돈과 시간 부담 없이 단기에 9호선 정규직 필기를 완벽하게 격파하는 통합 시뮬레이터입니다.<br class="hidden sm:block">
-                        <strong>10개 영역 × 8문항 = 80문항, 90분</strong> 타임어택과 인성검사 훈련을 실전처럼 연습하세요.
+                        <strong>의사소통 20 + 문제해결 20 + 수리 20 = 60문항, 70분</strong> 타임어택과 <strong>30분 200문항 인성검사</strong>를 실전처럼 연습하세요.
                     </p>
                     <div class="flex flex-wrap gap-3">
                         <button onclick="app.startMockExam()" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-2 text-sm">
                             <i data-lucide="play-circle" class="w-5 h-5"></i>
-                            <span>NCS 실전 모의고사 (90분/80문항)</span>
+                            <span>NCS 실전 모의고사 (70분/60문항)</span>
                         </button>
                         <button onclick="app.switchView('personality')" class="px-5 py-3 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-900/30 transition flex items-center space-x-2 text-sm">
                             <i data-lucide="user-check" class="w-5 h-5"></i>
-                            <span>인성검사 훈련 (참고용)</span>
+                            <span>인성검사 훈련 (30분/200문항)</span>
                         </button>
                         <button onclick="app.switchView('interview')" class="px-5 py-3 bg-violet-700 hover:bg-violet-600 text-white font-bold rounded-xl shadow-lg shadow-violet-900/30 transition flex items-center space-x-2 text-sm">
                             <i data-lucide="mic" class="w-5 h-5"></i>
@@ -178,12 +179,12 @@
                         <i data-lucide="clock" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-amber-400 mb-1">2023 합격 후기 기준 (고객안전직)</div>
-                        <div class="text-lg font-bold text-white mb-2">90분 / 80문항 (NCS 10영역)</div>
-                        <ul class="text-xs text-slate-300 space-y-1">
-                            <li class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span>의사소통·수리·문제해결·조직이해·정보 (각 8문항)</span></li>
-                            <li class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span><span>자원관리·기술·자기개발·대인관계·직업윤리 (각 8문항)</span></li>
-                            <li class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span><span>문항 배점 0.8 / 1.2 / 1.5점, 만점의 <strong>40%</strong> 이상 득점자 중 순위 결정</span></li>
+                        <div class="text-xs font-bold text-amber-400 mb-1">서울시메트로9호선 필기 규격</div>
+                        <div class="text-lg font-bold text-white mb-2">70분 / 60문항 (NCS 3영역)</div>
+                        <ul class="text-xs text-slate-300 space-y-1 font-mono">
+                            <li class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span>의사소통능력: <strong>20문항</strong> (지침, 공고문, 독해, 공문서)</span></li>
+                            <li class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span><span>문제해결능력: <strong>20문항</strong> (명제, 조건 추론, 시각표, 우선순위)</span></li>
+                            <li class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span><span>수리능력: <strong>20문항</strong> (응용수리, 자료해석, 단위환산)</span></li>
                         </ul>
                     </div>
                 </div>
@@ -193,8 +194,8 @@
                         <i data-lucide="shield-check" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <div class="text-xs font-bold text-emerald-400 mb-1">인성검사 훈련 (공식 규격 미확인)</div>
-                        <div class="text-lg font-bold text-white mb-2">30분 / 200문항 연습</div>
+                        <div class="text-xs font-bold text-emerald-400 mb-1">인성검사 (필기 당일 NCS와 함께 실시)</div>
+                        <div class="text-lg font-bold text-white mb-2">30분 / 200문항 (적부 판정)</div>
                         <ul class="text-xs text-slate-300 space-y-1">
                             <li class="flex items-center space-x-1">
                                 <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400"></i>
@@ -218,7 +219,7 @@
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-white flex items-center space-x-2">
                         <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
-                        <span>서울교통공사 직렬별 필기 합격 커트라인 & 경쟁률 데이터</span>
+                        <span>참고: 서울교통공사 직렬별 커트라인 & 경쟁률 (메트로9호선과 다를 수 있음)</span>
                     </h3>
                     <span class="text-xs text-slate-400">평균 경쟁률 <strong>9.91 : 1</strong></span>
                 </div>
@@ -290,7 +291,7 @@
             <div class="space-y-3">
                 <h2 class="text-lg font-bold text-white flex items-center space-x-2">
                     <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i>
-                    <span>NCS 10개 영역별 연습 (영역당 8문항)</span>
+                    <span>영역별 집중 연습 (영역당 10문항)</span>
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="category-cards">
                     <!-- Dynamic rendering by JS -->
@@ -379,7 +380,7 @@
                         <h4 class="text-sm font-bold text-white mb-3 flex items-center justify-between">
                             <span class="flex items-center space-x-1.5">
                                 <i data-lucide="grid" class="w-4 h-4 text-amber-400"></i>
-                                <span id="omr-title">80문항 OMR 답안지</span>
+                                <span id="omr-title">60문항 OMR 답안지</span>
                             </span>
                             <span class="text-xs text-slate-400 font-normal">빠른 이동</span>
                         </h4>
@@ -518,7 +519,7 @@
                     <i data-lucide="trophy" class="w-8 h-8"></i>
                 </div>
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2">NCS 모의고사 성적 분석 리포트</h2>
-                <p id="result-sub" class="text-slate-400 text-sm mb-6">NCS 90분 / 80문항 · 만점의 40% 이상 득점자 중 순위 결정 (후기 기준)</p>
+                <p id="result-sub" class="text-slate-400 text-sm mb-6">NCS 3영역 60문항 · 70분 · 목표 점수와 비교</p>
 
                 <div class="flex justify-center items-center space-x-6 md:space-x-12 mb-6">
                     <div>
@@ -727,7 +728,7 @@
 
     <!-- Footer -->
     <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
-        <p>서울교통공사 9호선운영부문 NCS(10영역 80문항 90분) 연습용 학습 앱 · 출제 형식은 합격 후기 기준이며 공식 공고로 확인하세요</p>
+        <p>서울시메트로9호선(주) 사무/역무 NCS(3영역 60문항 70분) + 인성검사 연습용 앱 · 최종 출제 형식은 공식 공고와 안내문으로 확인하세요</p>
     </footer>
 
     <!-- JavaScript Application Engine -->
@@ -818,7 +819,7 @@ class NCSApp {
                 this.currentView = 'dashboard';
                 this.questions = generateOfficialQuestionBank();
                 this.mode = 'full';
-                this.totalTime = 5400;
+                this.totalTime = 4200;
                 this.wrongs = [];
                 this.drills = [];
                 this.personalityQuestions = generatePersonality200Questions();
@@ -828,7 +829,7 @@ class NCSApp {
                 this.bookmarks = new Set();
 
                 // Target Series & Cutoffs Data from user uploaded image
-                this.targetSeries = "사무";
+                this.targetScore = 80;
                 this.cutoffs = {
                     "사무": 84.28,
                     "차량": 77.59,
@@ -867,7 +868,7 @@ class NCSApp {
                     const d = JSON.parse(localStorage.getItem('ncs9-state') || '{}');
                     this.solvedCount = d.solvedCount || 0;
                     this.topScore = d.topScore || 0;
-                    if (d.targetSeries && this.cutoffs[d.targetSeries]) this.targetSeries = d.targetSeries;
+                    if (d.targetScore) this.targetScore = d.targetScore;
                     this.persStatus = d.persStatus || null;
                     this.history = d.history || [];
                     this.wrongs = d.wrongs || [];
@@ -878,7 +879,7 @@ class NCSApp {
                 try {
                     localStorage.setItem('ncs9-state', JSON.stringify({
                         solvedCount: this.solvedCount, topScore: this.topScore,
-                        targetSeries: this.targetSeries, persStatus: this.persStatus, history: this.history, wrongs: this.wrongs
+                        targetScore: this.targetScore, persStatus: this.persStatus, history: this.history, wrongs: this.wrongs
                     }));
                 } catch (e) {}
             }
@@ -886,16 +887,19 @@ class NCSApp {
             getApiKey() { try { return localStorage.getItem('ncs9-apikey') || ''; } catch (e) { return ''; } }
             saveApiKey(v) { try { localStorage.setItem('ncs9-apikey', v.trim()); } catch (e) {} }
 
-            changeTargetSeries(series) {
-                this.targetSeries = series;
+            changeTargetScore(v) {
+                this.targetScore = Number(v);
                 this.saveState();
-                const cutoffScore = this.cutoffs[series] || 80.0;
-                alert(`[목표 직렬 변경] ${series} 직렬 필기 합격 커트라인 목표는 ${cutoffScore}점입니다!`);
             }
 
             init() {
                 const sel = document.getElementById('target-series-select');
-                if (sel) sel.value = this.targetSeries;
+                if (sel) sel.value = String(this.targetScore);
+                const dd = document.getElementById('dday-badge');
+                if (dd) {
+                    const days = Math.ceil((new Date('2026-11-07T00:00:00+09:00') - Date.now()) / 86400000);
+                    dd.textContent = '서울시메트로9호선(주) 사무/역무 · 필기(인성·NCS) 11/7~8 중 1일' + (days > 0 ? ' · D-' + days : days === 0 ? ' · D-DAY' : '');
+                }
                 const keyEl = document.getElementById('ai-key');
                 if (keyEl) keyEl.value = this.getApiKey();
                 this.renderCategories();
@@ -938,25 +942,28 @@ class NCSApp {
             renderCategories() {
                 const container = document.getElementById('category-cards');
                 const meta = {
-                    comm: ['message-square', '독해·공문서·경청·문장부호'], math: ['calculator', '응용수리·자료해석·단위환산·시차'],
-                    ps: ['cpu', '명제·조건추론·소프트/하드·3C'], org: ['building-2', '경영·조직구조·의사결정·SWOT'],
-                    info: ['monitor', '엑셀 함수·RFID·동적/정적 정보'], res: ['package', '생산성·적재적소·예산·시간관리'],
-                    tech: ['wrench', '기술혁신·벤치마킹·산업재해'], self: ['user-round', '조해리의 창·자기관리·경력개발'],
-                    inter: ['users', '팀워크·리더십·갈등관리·고객응대'], ethic: ['scale', '소명·천직·근로/공동체윤리·예절']
+                    comm: ['message-square', '독해·공문서·문단 배열·맞춤법·민원 응대'], ps: ['cpu', '명제·조건 추론·참/거짓·시각표·우선순위'],
+                    math: ['calculator', '응용수리·자료해석·단위환산·시차 (20가지 유형, 숫자는 매번 변경)'],
+                    org: ['building-2', '경영·조직구조·의사결정·SWOT'], info: ['monitor', '엑셀 함수·RFID·동적/정적 정보'],
+                    res: ['package', '생산성·적재적소·예산·시간관리'], tech: ['wrench', '기술혁신·벤치마킹·산업재해'],
+                    self: ['user-round', '조해리의 창·자기관리·경력개발'], inter: ['users', '팀워크·리더십·갈등관리·고객응대'],
+                    ethic: ['scale', '소명·천직·근로/공동체윤리·예절']
                 };
-
-                const cards = NCSBank.AREAS.map(a => `
-                    <div onclick="app.startPractice('${a.key}')" class="bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-xl p-4 cursor-pointer transition transform hover:-translate-y-0.5">
+                const main = ['comm', 'ps', 'math'];
+                const card = (a, n, big) => `
+                    <div onclick="app.startPractice('${a.key}')" class="bg-slate-900 border ${big ? 'border-amber-500/30' : 'border-slate-800'} hover:border-amber-500/50 rounded-xl p-4 cursor-pointer transition transform hover:-translate-y-0.5">
                         <div class="flex items-center space-x-3 mb-2">
                             <div class="p-2 bg-slate-800 text-amber-400 rounded-lg"><i data-lucide="${meta[a.key][0]}" class="w-4 h-4"></i></div>
                             <h3 class="font-bold text-white text-sm">${a.name}</h3>
                         </div>
                         <p class="text-xs text-slate-400 leading-relaxed mb-3">${meta[a.key][1]}</p>
                         <div class="flex items-center justify-between text-xs text-amber-400 font-semibold pt-2 border-t border-slate-800/60">
-                            <span>8문항 연습</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                            <span>${n}문항 연습</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
+                const areas = NCSBank.AREAS;
+                const mainCards = main.map(k => card(areas.find(a => a.key === k), 10, true)).join('');
+                const extraCards = areas.filter(a => !main.includes(a.key)).map(a => card(a, 8, false)).join('');
 
                 const n = this.wrongs.length;
                 const wrongCard = `
@@ -971,10 +978,18 @@ class NCSApp {
                         ${n ? '<span class="text-xs font-semibold text-rose-300 flex items-center space-x-1"><span>복습하기</span><i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>' : ''}
                     </div>`;
 
-                container.innerHTML = cards + wrongCard;
+                const extra = `
+                    <details class="md:col-span-3 bg-slate-900/60 border border-slate-800 rounded-xl p-4">
+                        <summary class="cursor-pointer text-sm font-semibold text-slate-300">기타 NCS 영역 7개 · 확장 연습 (이번 필기 출제 여부 미확인)</summary>
+                        <p class="text-xs text-slate-400 mt-2 mb-3">이번 필기 안내는 의사소통·문제해결·수리 3영역입니다. 아래는 다른 공기업 NCS 대비용 참고 연습이에요.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">${extraCards}</div>
+                        <button onclick="app.startExtExam()" class="mt-3 w-full py-2.5 bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold rounded-lg">확장 모의고사 시작 (10영역 80문항 · 90분 · 서교공 후기 기준)</button>
+                    </details>`;
+
+                container.innerHTML = mainCards + wrongCard + extra;
             }
 
-            renderSpeedDrills() {
+renderSpeedDrills() {
                 const container = document.getElementById('speed-drill-list');
                 this.drills = NCSBank.sample(6);
 
@@ -1019,12 +1034,17 @@ class NCSApp {
             }
 
             startMockExam() {
-                this.beginSession(NCSBank.exam(), 'full', 5400, '9호선 NCS 실전 모의고사 (10영역 80문항 · 90분)');
+                this.beginSession(NCSBank.exam('main'), 'full', 4200, '메트로9호선 NCS 실전 모의고사 (3영역 60문항 · 70분)');
+            }
+
+            startExtExam() {
+                this.beginSession(NCSBank.exam('ext'), 'ext', 5400, '확장 연습: NCS 10영역 80문항 · 90분 (서교공 후기 기준)');
             }
 
             startPractice(cat) {
                 const area = NCSBank.AREAS.find(a => a.key === cat);
-                this.beginSession(NCSBank.practice(cat, 8), 'practice', 560, `${area.name} 8문항 연습`);
+                const n = ['comm', 'ps', 'math'].includes(cat) ? 10 : 8;
+                this.beginSession(NCSBank.practice(cat, n), 'practice', n * 70, `${area.name} ${n}문항 연습`);
             }
 
             startWrongNote() {
@@ -1215,7 +1235,7 @@ startTimer() {
                 document.getElementById('result-score').textContent = `${totalScore}점`;
                 document.getElementById('result-count').textContent = `${correctCount} / ${total}`;
                 document.getElementById('result-sub').textContent = this.mode === 'full'
-                    ? 'NCS 90분 / 80문항 · 만점의 40% 이상 득점자 중 순위 결정 (후기 기준)'
+                    ? 'NCS 3영역 60문항 · 70분 · 목표 점수와 비교'
                     : '연습 세트 결과 · 틀린 문제는 오답노트에 저장되었습니다';
 
                 const timeTakenSec = Math.max(0, this.totalTime - this.timeLeft);
@@ -1230,21 +1250,18 @@ startTimer() {
 
                 const evalEl = document.getElementById('result-evaluation');
                 if (this.mode === 'full') {
-                    const targetCutoff = this.cutoffs[this.targetSeries] || 80;
-                    if (totalScore < 40) {
-                        evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                        evalEl.textContent = `⚠️ [과락선 미달] 만점의 40% 이상이어야 순위 심사 대상입니다. 오답노트부터 복습하세요.`;
-                    } else if (totalScore >= targetCutoff) {
+                    const target = this.targetScore || 80;
+                    if (totalScore >= target) {
                         evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
-                        evalEl.textContent = `🎉 [합격 유력] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)을 상회하는 안정권 점수입니다!`;
-                    } else if (totalScore >= targetCutoff - 10) {
+                        evalEl.textContent = `🎉 목표 점수(${target}점)를 넘었습니다! 같은 페이스를 유지하세요.`;
+                    } else if (totalScore >= target - 10) {
                         evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
-                        evalEl.textContent = `⚡ [보완 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)까지 약 ${Math.round(targetCutoff - totalScore)}점 부족합니다. 약한 영역을 오답노트로 보완하세요.`;
+                        evalEl.textContent = `⚡ 목표 점수(${target}점)까지 약 ${Math.round((target - totalScore) * 10) / 10}점 부족합니다. 약한 영역을 오답노트로 보완하세요.`;
                     } else {
                         evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
-                        evalEl.textContent = `⚠️ [재점검 필요] ${this.targetSeries} 직렬 커트라인(${targetCutoff}점)에 크게 미달했습니다. 영역별 8문항 연습부터 반복하세요.`;
+                        evalEl.textContent = `⚠️ 목표 점수(${target}점)에 크게 미달했습니다. 영역별 10문항 연습부터 반복하세요.`;
                     }
-                } else {
+} else {
                     evalEl.className = "inline-block px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-800 text-amber-300 border border-slate-700";
                     evalEl.textContent = `정답률 ${totalScore}% · 오답노트 ${this.wrongs.length}문항 남음`;
                 }
