@@ -297,10 +297,14 @@
   const pool = { comm: buildComm, ps: buildPs, math: buildMath };
   const take = (list, n) => shuffle(list).slice(0, n);
 
+  // questions2.js가 영역을 확장하고 exam/practice/sample을 다시 정의한다.
   window.NCSBank = {
     exam() { return [...take(buildComm(), 20), ...take(buildPs(), 20), ...take(buildMath(), 20)]; },
     practice(cat, n) { return take(pool[cat](), n); },
     sample(n) { return take([...buildComm(), ...buildPs(), ...buildMath()], n); },
-    shuffle
+    shuffle,
+    _h: { R, pick, shuffle, won, fmtT, uid, mk, uniqOpts, withId },
+    _data: { COMM, PS, MATH },
+    _build: { comm: buildComm, ps: buildPs }
   };
 })();
